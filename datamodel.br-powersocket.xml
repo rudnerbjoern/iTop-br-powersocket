@@ -182,7 +182,7 @@
         <class id="DatacenterDevice" _delta="must_exist">
             <fields>
                 <field id="powerAsocket_id" xsi:type="AttributeExternalKey" _delta="define">
-                    <filter><![CDATA[SELECT PowerSocket WHERE pdu_id = :this->powerA_id]]></filter>
+                    <filter><![CDATA[SELECT PowerSocket WHERE pdu_id = :this->powerA_id AND datacenterdevice_id = 0]]></filter>
                     <dependencies>
                         <attribute id="powerA_id"/>
                     </dependencies>
@@ -200,7 +200,7 @@
 
             <fields>
                 <field id="powerBsocket_id" xsi:type="AttributeExternalKey" _delta="define">
-                    <filter><![CDATA[SELECT PowerSocket WHERE pdu_id = :this->powerB_id]]></filter>
+                    <filter><![CDATA[SELECT PowerSocket WHERE pdu_id = :this->powerB_id AND datacenterdevice_id = 0]]></filter>
                     <dependencies>
                         <attribute id="powerB_id"/>
                     </dependencies>
