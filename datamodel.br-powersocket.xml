@@ -219,17 +219,27 @@
             <presentation>
                 <details>
                     <items>
-                        <item id="col:col2">
-                            <item id="fieldset:Server:power">
-                                <items>
-                                    <item id="powerAsocket_id" _delat="define">
-                                        <rank>11</rank>
-                                    </item>
-                                </items>
-                            </item>
+                        <item id="col:col2" _delta="must_exist">
+                            <items>
+                                <item id="fieldset:Server:power" _delta="must_exist">
+                                    <items>
+                                        <item id="powerAsocket_id" _delat="define">
+                                            <rank>11</rank>
+                                        </item>
+                                    </items>
+                                </item>
+                            </items>
                         </item>
+
                     </items>
                 </details>
+                <search>
+                    <items>
+                        <item id="powerAsocket_id" _delat="define">
+                            <rank>101</rank>
+                        </item>
+                    </items>
+                </search>
             </presentation>
         </class>
     </classes>
