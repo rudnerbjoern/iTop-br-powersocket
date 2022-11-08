@@ -161,11 +161,11 @@
                 <field id="powersocket_list" xsi:type="AttributeLinkedSet" _delta="define">
                     <linked_class>PowerSocket</linked_class>
                     <ext_key_to_me>pdu_id</ext_key_to_me>
-                    <edit_mode>add_remove</edit_mode>
+                    <edit_mode>in_place</edit_mode>
+                    <tracking_level>all</tracking_level>
                     <count_min>0</count_min>
                     <count_max>0</count_max>
-                    <duplicates />
-
+                    <duplicates>false</duplicates>
                 </field>
             </fields>
             <presentation>
@@ -252,13 +252,13 @@
                                         <item id="powerA_id">
                                             <rank>10</rank>
                                         </item>
-                                        <item id="powerAsocket_id" _delat="define">
+                                        <item id="powerAsocket_id" _delta="define">
                                             <rank>11</rank>
                                         </item>
                                         <item id="powerB_id">
                                             <rank>20</rank>
                                         </item>
-                                        <item id="powerBsocket_id" _delat="define">
+                                        <item id="powerBsocket_id" _delta="define">
                                             <rank>21</rank>
                                         </item>
                                         <item id="redundancy">
@@ -272,10 +272,225 @@
                 </details>
                 <search>
                     <items>
-                        <item id="powerAsocket_id" _delat="define">
+                        <item id="powerAsocket_id" _delta="define">
                             <rank>101</rank>
                         </item>
-                        <item id="powerBsocket_id" _delat="define">
+                        <item id="powerBsocket_id" _delta="define">
+                            <rank>111</rank>
+                        </item>
+                    </items>
+                </search>
+            </presentation>
+        </class>
+
+        <class id="NetworkDevice" _delta="must_exist">
+            <presentation>
+                <details>
+                    <items>
+                        <item id="col:col2" _delta="must_exist">
+                            <items>
+                                <item id="fieldset:Server:power" _delta="must_exist">
+                                    <rank>20</rank>
+                                    <items>
+                                        <item id="powerA_id">
+                                            <rank>10</rank>
+                                        </item>
+                                        <item id="powerAsocket_id" _delta="define">
+                                            <rank>11</rank>
+                                        </item>
+                                        <item id="powerB_id">
+                                            <rank>20</rank>
+                                        </item>
+                                        <item id="powerBsocket_id" _delta="define">
+                                            <rank>21</rank>
+                                        </item>
+                                        <item id="redundancy">
+                                            <rank>30</rank>
+                                        </item>
+                                    </items>
+                                </item>
+                            </items>
+                        </item>
+                    </items>
+                </details>
+                <search>
+                    <items>
+                        <item id="powerAsocket_id" _delta="define">
+                            <rank>101</rank>
+                        </item>
+                        <item id="powerBsocket_id" _delta="define">
+                            <rank>111</rank>
+                        </item>
+                    </items>
+                </search>
+            </presentation>
+        </class>
+
+        <class id="StorageSystem" _delta="must_exist">
+            <presentation>
+                <details>
+                    <items>
+                        <item id="col:col2" _delta="must_exist">
+                            <items>
+                                <item id="fieldset:Server:power" _delta="must_exist">
+                                    <rank>20</rank>
+                                    <items>
+                                        <item id="powerA_id">
+                                            <rank>10</rank>
+                                        </item>
+                                        <item id="powerAsocket_id" _delta="define">
+                                            <rank>11</rank>
+                                        </item>
+                                        <item id="powerB_id">
+                                            <rank>20</rank>
+                                        </item>
+                                        <item id="powerBsocket_id" _delta="define">
+                                            <rank>21</rank>
+                                        </item>
+                                        <item id="redundancy">
+                                            <rank>30</rank>
+                                        </item>
+                                    </items>
+                                </item>
+                            </items>
+                        </item>
+                    </items>
+                </details>
+                <search>
+                    <items>
+                        <item id="powerAsocket_id" _delta="define">
+                            <rank>101</rank>
+                        </item>
+                        <item id="powerBsocket_id" _delta="define">
+                            <rank>111</rank>
+                        </item>
+                    </items>
+                </search>
+            </presentation>
+        </class>
+
+        <class id="SANSwitch" _delta="must_exist">
+            <presentation>
+                <details>
+                    <items>
+                        <item id="col:col2" _delta="must_exist">
+                            <items>
+                                <item id="fieldset:Server:power" _delta="must_exist">
+                                    <rank>20</rank>
+                                    <items>
+                                        <item id="powerA_id">
+                                            <rank>10</rank>
+                                        </item>
+                                        <item id="powerAsocket_id" _delta="define">
+                                            <rank>11</rank>
+                                        </item>
+                                        <item id="powerB_id">
+                                            <rank>20</rank>
+                                        </item>
+                                        <item id="powerBsocket_id" _delta="define">
+                                            <rank>21</rank>
+                                        </item>
+                                        <item id="redundancy">
+                                            <rank>30</rank>
+                                        </item>
+                                    </items>
+                                </item>
+                            </items>
+                        </item>
+                    </items>
+                </details>
+                <search>
+                    <items>
+                        <item id="powerAsocket_id" _delta="define">
+                            <rank>101</rank>
+                        </item>
+                        <item id="powerBsocket_id" _delta="define">
+                            <rank>111</rank>
+                        </item>
+                    </items>
+                </search>
+            </presentation>
+        </class>
+
+        <class id="TapeLibrary" _delta="must_exist">
+            <presentation>
+                <details>
+                    <items>
+                        <item id="col:col2" _delta="must_exist">
+                            <items>
+                                <item id="fieldset:Server:power" _delta="must_exist">
+                                    <rank>20</rank>
+                                    <items>
+                                        <item id="powerA_id">
+                                            <rank>10</rank>
+                                        </item>
+                                        <item id="powerAsocket_id" _delta="define">
+                                            <rank>11</rank>
+                                        </item>
+                                        <item id="powerB_id">
+                                            <rank>20</rank>
+                                        </item>
+                                        <item id="powerBsocket_id" _delta="define">
+                                            <rank>21</rank>
+                                        </item>
+                                        <item id="redundancy">
+                                            <rank>30</rank>
+                                        </item>
+                                    </items>
+                                </item>
+                            </items>
+                        </item>
+                    </items>
+                </details>
+                <search>
+                    <items>
+                        <item id="powerAsocket_id" _delta="define">
+                            <rank>101</rank>
+                        </item>
+                        <item id="powerBsocket_id" _delta="define">
+                            <rank>111</rank>
+                        </item>
+                    </items>
+                </search>
+            </presentation>
+        </class>
+
+        <class id="NAS" _delta="must_exist">
+            <presentation>
+                <details>
+                    <items>
+                        <item id="col:col2" _delta="must_exist">
+                            <items>
+                                <item id="fieldset:Server:power" _delta="must_exist">
+                                    <rank>20</rank>
+                                    <items>
+                                        <item id="powerA_id">
+                                            <rank>10</rank>
+                                        </item>
+                                        <item id="powerAsocket_id" _delta="define">
+                                            <rank>11</rank>
+                                        </item>
+                                        <item id="powerB_id">
+                                            <rank>20</rank>
+                                        </item>
+                                        <item id="powerBsocket_id" _delta="define">
+                                            <rank>21</rank>
+                                        </item>
+                                        <item id="redundancy">
+                                            <rank>30</rank>
+                                        </item>
+                                    </items>
+                                </item>
+                            </items>
+                        </item>
+                    </items>
+                </details>
+                <search>
+                    <items>
+                        <item id="powerAsocket_id" _delta="define">
+                            <rank>101</rank>
+                        </item>
+                        <item id="powerBsocket_id" _delta="define">
                             <rank>111</rank>
                         </item>
                     </items>

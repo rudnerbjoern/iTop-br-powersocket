@@ -13,6 +13,7 @@
 //
 Dict::Add('EN US', 'English', 'English', array(
     'Class:PowerSocket' => 'Power Socket',
+    'Class:PowerSocket/Name' => '%2$s - %1$s',
     'Class:PowerSocket/Attribute:name' => 'Name',
     'Class:PowerSocket/Attribute:status' => 'Status',
     'Class:PowerSocket/Attribute:comment' => 'Comment',

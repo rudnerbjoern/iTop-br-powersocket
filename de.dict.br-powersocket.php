@@ -13,6 +13,7 @@
 //
 Dict::Add('DE DE', 'German', 'Deutsch', array(
     'Class:PowerSocket' => 'Stromanschluss',
+    'Class:PowerSocket/Name' => '%2$s - %1$s',
     'Class:PowerSocket/Attribute:name' => 'Name',
     'Class:PowerSocket/Attribute:status' => 'Status',
     'Class:PowerSocket/Attribute:comment' => 'Kommentar',
@@ -28,4 +29,18 @@ Dict::Add('DE DE', 'German', 'Deutsch', array(
 Dict::Add('DE DE', 'German', 'Deutsch', array(
     'Class:PDU/Attribute:powersocket_list' => 'Stromanschlüsse',
     'Class:PDU/Attribute:powersocket_list+' => '',
+));
+
+//
+// Class: DatacenterDevice
+//
+Dict::Add('DE DE', 'German', 'Deutsch', array(
+    'Class:DatacenterDevice/Attribute:powerAsocket_id' => 'PowerA Anschluss',
+    'Class:DatacenterDevice/Attribute:powerAsocket_id+' => '',
+    'Class:DatacenterDevice/Attribute:powerAsocket_name' => 'PowerA Anschluss Name',
+    'Class:DatacenterDevice/Attribute:powerAsocket_name+' => '',
+    'Class:DatacenterDevice/Attribute:powerBsocket_id' => 'PowerB Anschluss',
+    'Class:DatacenterDevice/Attribute:powerBsocket_id+' => '',
+    'Class:DatacenterDevice/Attribute:powerBsocket_name' => 'PowerB Anschluss Name',
+    'Class:DatacenterDevice/Attribute:powerBsocket_name+' => '',
 ));
