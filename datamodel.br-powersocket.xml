@@ -164,7 +164,7 @@
         <menu id="ConfigManagementOverview" xsi:type="DashboardMenuNode" _delta="must_exist">
             <definition>
                 <cells>
-                    <cell id="br-socket-00" _delta="must_exist">
+                    <cell id="br-socket-00" _delta="define">
                         <!-- Dashboard -> Miscellaneous -->
                         <dashlets>
                             <dashlet id="99" xsi:type="DashletBadge" _delta="define">
