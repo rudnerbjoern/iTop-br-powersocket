@@ -97,8 +97,11 @@
                         <item id="pdu_id">
                             <rank>30</rank>
                         </item>
-                        <item id="comment">
+                        <item id="datacenterdevice_id">
                             <rank>40</rank>
+                        </item>
+                        <item id="comment">
+                            <rank>50</rank>
                         </item>
                     </items>
                 </details>
@@ -109,6 +112,9 @@
                         </item>
                         <item id="status">
                             <rank>20</rank>
+                        </item>
+                        <item id="datacenterdevice_id">
+                            <rank>43</rank>
                         </item>
                         <item id="comment">
                             <rank>40</rank>
@@ -123,6 +129,12 @@
                         <item id="status">
                             <rank>20</rank>
                         </item>
+                        <item id="pdu_id">
+                            <rank>40</rank>
+                        </item>
+                        <item id="datacenterdevice_id">
+                            <rank>50</rank>
+                        </item>
                     </items>
                 </search>
                 <default_search >
@@ -135,6 +147,9 @@
                         </item>
                         <item id="pdu_id">
                             <rank>40</rank>
+                        </item>
+                        <item id="datacenterdevice_id">
+                            <rank>50</rank>
                         </item>
                     </items>
                 </default_search>
