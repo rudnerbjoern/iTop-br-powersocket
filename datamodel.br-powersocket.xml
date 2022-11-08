@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<itop_design xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.7">
+    <!--
+    * @license     https://www.gnu.org/licenses/gpl-3.0.en.html
+    -->
+    <classes>
+        <class id="PowerSocket" _delta="define">
+            <parent>cmdbAbstractObject</parent>
+            <properties>
+                <category>bizmodel,searchable</category>
+                <abstract>false</abstract>
+                <key_type>autoincrement</key_type>
+                <db_table>powersocket</db_table>
+                <db_key_field>id</db_key_field>
+                <db_final_class_field />
+                <naming>
+                    <attributes>
+                        <attribute id="name" />
+                        <attribute id="pdu_name" />
+                    </attributes>
+                </naming>
+                <display_template />
+                <reconciliation>
+                    <attributes>
+                        <attribute id="name" />
+                        <attribute id="pdu_id" />
+                        <attribute id="pdu_name" />
+                    </attributes>
+                </reconciliation>
+                <obsolescence>
+                    <condition>pdu_id_obsolescence_flag</condition>
+                </obsolescence>
+            </properties>
+            <fields>
+                <field id="name" xsi:type="AttributeString">
+                    <sql>name</sql>
+                    <default_value/>
+                    <is_null_allowed>false</is_null_allowed>
+                </field>
+                <field id="comment" xsi:type="AttributeText">
+                    <sql>comment</sql>
+                    <default_value/>
+                    <is_null_allowed>true</is_null_allowed>
+                </field>
+                <field id="pdu_id" xsi:type="AttributeExternalKey">
+                    <sql>pdu_id</sql>
+                    <target_class>PDU</target_class>
+                    <is_null_allowed>false</is_null_allowed>
+                    <on_target_delete>DEL_MANUAL</on_target_delete>
+                </field>
+                <field id="pdu_name" xsi:type="AttributeExternalField">
+                    <extkey_attcode>pdu_id</extkey_attcode>
+                    <target_attcode>name</target_attcode>
+                </field>
+                <field id="status" xsi:type="AttributeEnum" _altered_in="teemip-config-mgmt-adaptor">
+                    <values>
+                        <value id="stock">stock</value>
+                        <value id="active">active</value>
+                        <value id="inactive">inactive</value>
+                        <value id="obsolete">obsolete</value>
+                    </values>
+                    <sql>status</sql>
+                    <default_value>active</default_value>
+                    <is_null_allowed>true</is_null_allowed>
+                    <display_style>radio_horizontal</display_style>
+                </field>
+                <field id="datacenterdevice_id" xsi:type="AttributeExternalKey">
+                    <sql>datacenterdevice_id</sql>
+                    <target_class>DatacenterDevice</target_class>
+                    <is_null_allowed>true</is_null_allowed>
+                    <on_target_delete>DEL_MANUAL</on_target_delete>
+                </field>
+                <field id="datacenterdevice_name" xsi:type="AttributeExternalField">
+                    <extkey_attcode>datacenterdevice_id</extkey_attcode>
+                    <target_attcode>name</target_attcode>
+                </field>
+            </fields>
+            <relations>
+                <relation id="impacts">
+                    <neighbours>
+                        <neighbour id="datacenterdevice">
+                            <attribute>datacenterdevice_id</attribute>
+                        </neighbour>
+                    </neighbours>
+                </relation>
+            </relations>
+            <presentation>
+                <details>
+                    <items>
+                        <item id="name">
+                            <rank>10</rank>
+                        </item>
+                        <item id="status">
+                            <rank>20</rank>
+                        </item>
+                        <item id="pdu_id">
+                            <rank>30</rank>
+                        </item>
+                        <item id="comment">
+                            <rank>40</rank>
+                        </item>
+                    </items>
+                </details>
+                <list>
+                    <items>
+                        <item id="name">
+                            <rank>10</rank>
+                        </item>
+                        <item id="status">
+                            <rank>20</rank>
+                        </item>
+                        <item id="comment">
+                            <rank>40</rank>
+                        </item>
+                    </items>
+                </list>
+                <search>
+                    <items>
+                        <item id="name">
+                            <rank>10</rank>
+                        </item>
+                        <item id="status">
+                            <rank>20</rank>
+                        </item>
+                    </items>
+                </search>
+                <default_search >
+                    <items>
+                        <item id="friendlyname">
+                            <rank>10</rank>
+                        </item>
+                        <item id="status">
+                            <rank>20</rank>
+                        </item>
+                        <item id="pdu_id">
+                            <rank>40</rank>
+                        </item>
+                    </items>
+                </default_search>
+            </presentation>
+        </class>
+
+        <class id="PDU" _delta="must_exist">
+            <field id="powersocket_list" xsi:type="AttributeLinkedSet" _delta="define">
+                <linked_class>PowerSocket</linked_class>
+                <ext_key_to_me>pdu_id</ext_key_to_me>
+                <edit_mode>add_remove</edit_mode>
+                <count_min>0</count_min>
+                <count_max>0</count_max>
+            </field>
+            <presentation>
+                <details>
+                    <items>
+                        <item id="powersocket_list" _delta="define">
+                            <rank>105</rank>
+                        </item>
+                    </items>
+                </details>
+            </presentation>
+        </class>
+    </classes>
+
+    <menus>
+        <menu id="ConfigManagementOverview" xsi:type="DashboardMenuNode" _delta="must_exist">
+            <definition>
+                <cells>
+                    <cell id="br-socket-00" _delta="must_exist">
+                        <!-- Dashboard -> Miscellaneous -->
+                        <dashlets>
+                            <dashlet id="99" xsi:type="DashletBadge" _delta="define">
+                                <rank>10</rank>
+                                <class>PowerSocket</class>
+                            </dashlet>
+                        </dashlets>
+                    </cell>
+                </cells>
+            </definition>
+        </menu>
+    </menus>
+</itop_design>
