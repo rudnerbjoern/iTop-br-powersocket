@@ -27,7 +27,7 @@ Dict::Add('EN US', 'English', 'English', array(
 // Class: PDU
 //
 Dict::Add('EN US', 'English', 'English', array(
-    'Class:PDU/Attribute:powersocket_list' => 'Power Socket(s)',
+    'Class:PDU/Attribute:powersocket_list' => 'Power Sockets',
     'Class:PDU/Attribute:powersocket_list+' => '',
 ));
 
