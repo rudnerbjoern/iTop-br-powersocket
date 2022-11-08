@@ -75,6 +75,7 @@
                     <target_attcode>name</target_attcode>
                 </field>
             </fields>
+            <methods />
             <relations>
                 <relation id="impacts">
                     <neighbours>
