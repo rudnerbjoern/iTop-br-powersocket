@@ -142,13 +142,17 @@
         </class>
 
         <class id="PDU" _delta="must_exist">
-            <field id="powersocket_list" xsi:type="AttributeLinkedSet" _delta="define">
-                <linked_class>PowerSocket</linked_class>
-                <ext_key_to_me>pdu_id</ext_key_to_me>
-                <edit_mode>add_remove</edit_mode>
-                <count_min>0</count_min>
-                <count_max>0</count_max>
-            </field>
+            <fields>
+                <field id="powersocket_list" xsi:type="AttributeLinkedSet" _delta="define">
+                    <linked_class>PowerSocket</linked_class>
+                    <ext_key_to_me>pdu_id</ext_key_to_me>
+                    <edit_mode>add_remove</edit_mode>
+                    <count_min>0</count_min>
+                    <count_max>0</count_max>
+                    <duplicates />
+
+                </field>
+            </fields>
             <presentation>
                 <details>
                     <items>
