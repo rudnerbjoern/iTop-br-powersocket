@@ -26,6 +26,20 @@ Dict::Add('EN US', 'English', 'English', array(
 // Class: PDU
 //
 Dict::Add('EN US', 'English', 'English', array(
-    'Class:PDU/Attribute:powersocket_list' => 'Power Sockets',
+    'Class:PDU/Attribute:powersocket_list' => 'Power Socket(s)',
     'Class:PDU/Attribute:powersocket_list+' => '',
+));
+
+//
+// Class: DatacenterDevice
+//
+Dict::Add('EN US', 'English', 'English', array(
+    'Class:DatacenterDevice/Attribute:powerAsocket_id' => 'PowerA socket',
+    'Class:DatacenterDevice/Attribute:powerAsocket_id+' => '',
+    'Class:DatacenterDevice/Attribute:powerAsocket_name' => 'PowerA socket name',
+    'Class:DatacenterDevice/Attribute:powerAsocket_name+' => '',
+    'Class:DatacenterDevice/Attribute:powerBsocket_id' => 'PowerB socket',
+    'Class:DatacenterDevice/Attribute:powerBsocket_id+' => '',
+    'Class:DatacenterDevice/Attribute:powerBsocket_name' => 'PowerB socket name',
+    'Class:DatacenterDevice/Attribute:powerBsocket_name+' => '',
 ));

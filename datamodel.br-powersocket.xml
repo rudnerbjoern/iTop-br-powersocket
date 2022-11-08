@@ -190,18 +190,40 @@
                     <target_class>PowerSocket</target_class>
                     <is_null_allowed>true</is_null_allowed>
                     <on_target_delete>DEL_MANUAL</on_target_delete>
-                    <allow_target_creation>true</allow_target_creation>
+                    <allow_target_creation>false</allow_target_creation>
                 </field>
                 <field id="powerAsocket_name" xsi:type="AttributeExternalField" _delta="define">
                     <extkey_attcode>powerAsocket_id</extkey_attcode>
                     <target_attcode>name</target_attcode>
                 </field>
             </fields>
+
+            <fields>
+                <field id="powerBsocket_id" xsi:type="AttributeExternalKey" _delta="define">
+                    <filter><![CDATA[SELECT PowerSocket WHERE pdu_id = :this->powerB_id]]></filter>
+                    <dependencies>
+                        <attribute id="powerB_id"/>
+                    </dependencies>
+                    <sql>powerAsocket_id</sql>
+                    <target_class>PowerSocket</target_class>
+                    <is_null_allowed>true</is_null_allowed>
+                    <on_target_delete>DEL_MANUAL</on_target_delete>
+                    <allow_target_creation>false</allow_target_creation>
+                </field>
+                <field id="powerBsocket_name" xsi:type="AttributeExternalField" _delta="define">
+                    <extkey_attcode>powerBsocket_id</extkey_attcode>
+                    <target_attcode>name</target_attcode>
+                </field>
+            </fields>
+
             <presentation>
                 <details>
                     <items>
                         <item id="powerAsocket_id" _delta="define">
                             <rank>131</rank>
+                        </item>
+                        <item id="powerBsocket_id" _delta="define">
+                            <rank>141</rank>
                         </item>
                     </items>
                 </details>
@@ -209,6 +231,9 @@
                     <items>
                         <item id="powerAsocket_id">
                             <rank>101</rank>
+                        </item>
+                        <item id="powerBsocket_id">
+                            <rank>111</rank>
                         </item>
                     </items>
                 </search>
@@ -222,21 +247,36 @@
                         <item id="col:col2" _delta="must_exist">
                             <items>
                                 <item id="fieldset:Server:power" _delta="must_exist">
+                                    <rank>20</rank>
                                     <items>
+                                        <item id="powerA_id">
+                                            <rank>10</rank>
+                                        </item>
                                         <item id="powerAsocket_id" _delat="define">
                                             <rank>11</rank>
+                                        </item>
+                                        <item id="powerB_id">
+                                            <rank>20</rank>
+                                        </item>
+                                        <item id="powerBsocket_id" _delat="define">
+                                            <rank>21</rank>
+                                        </item>
+                                        <item id="redundancy">
+                                            <rank>30</rank>
                                         </item>
                                     </items>
                                 </item>
                             </items>
                         </item>
-
                     </items>
                 </details>
                 <search>
                     <items>
                         <item id="powerAsocket_id" _delat="define">
                             <rank>101</rank>
+                        </item>
+                        <item id="powerBsocket_id" _delat="define">
+                            <rank>111</rank>
                         </item>
                     </items>
                 </search>
