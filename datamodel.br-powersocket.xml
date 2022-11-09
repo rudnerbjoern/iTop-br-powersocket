@@ -196,9 +196,6 @@
                     <extkey_attcode>powerAsocket_id</extkey_attcode>
                     <target_attcode>name</target_attcode>
                 </field>
-            </fields>
-
-            <fields>
                 <field id="powerBsocket_id" xsi:type="AttributeExternalKey" _delta="define">
                     <filter><![CDATA[SELECT PowerSocket WHERE pdu_id = :this->powerB_id AND datacenterdevice_id = 0]]></filter>
                     <dependencies>
@@ -216,6 +213,116 @@
                 </field>
             </fields>
 
+            <methods>
+                <method id="ConnectPowerSocket" _delta="define">
+                    <static>false</static>
+                    <access>public</access>
+                    <type>Overload-cmdbAbstractObject</type>
+                    <code>
+                        <![CDATA[public function ConnectPowerSocket($powerSocketId)
+{
+    if ($powerSocketId != 0) {
+        $oObject = MetaModel::GetObject('PowerSocket', $powerSocketId, false);
+        // FYI: MetaModel::GetObject('PowerSocket', 0); generates a FatalError
+        if (is_object($oObject)) {
+            $oObject->Set('datacenterdevice_id', $this->GetKey());
+            $oObject->DBUpdate();
+        }
+    }
+}]]>
+                    </code>
+                </method>
+                <method id="DisconnectPowerSocket" _delta="define">
+                    <static>false</static>
+                    <access>public</access>
+                    <type>Overload-cmdbAbstractObject</type>
+                    <code>
+                        <![CDATA[public function DisconnectPowerSocket($powerSocketId)
+{
+    if ($powerSocketId != 0) {
+        $oObject = MetaModel::GetObject('PowerSocket', $powerSocketId, false);
+        // FYI: MetaModel::GetObject('PowerSocket', 0); generates a FatalError
+        if (is_object($oObject)) {
+            $oObject->Set('datacenterdevice_id', '');
+            $oObject->DBUpdate();
+        }
+    }
+}]]>
+                    </code>
+                </method>
+                <method id="AfterInsert" _delta="define">
+                    <static>false</static>
+                    <access>public</access>
+                    <type>Overload-DBObject</type>
+                    <code>
+                        <![CDATA[public function AfterInsert()
+{
+    if ($this->Get('powerAsocket_id') != 0)
+        $this->ConnectPowerSocket($this->Get('powerAsocket_id'));
+    if ($this->Get('powerBsocket_id') != 0)
+        $this->ConnectPowerSocket($this->Get('powerBsocket_id'));
+    parent::AfterInsert();
+}]]>
+                    </code>
+                </method>
+                <method id="OnUpdate" _delta="define">
+                    <static>false</static>
+                    <access>public</access>
+                    <type>Overload-DBObject</type>
+                    <code>
+                        <![CDATA[public function OnUpdate()
+{
+    $aChanges = $this->ListChanges();
+    if (array_key_exists('powerAsocket_id', $aChanges)) {
+        // record in the Location memory object that the PowerSocketA was changed
+        $this->iPowerSocketAChanged = true;
+        // disconnect the old PowerSocketA
+        $this->DisconnectPowerSocket($this->GetOriginal('powerAsocket_id'));
+    }
+    if (array_key_exists('powerBsocket_id', $aChanges)) {
+        // record in the Location memory object that the PowerSocketB was changed
+        $this->iPowerSocketBChanged = true;
+        // disconnect the old PowerSocketB
+        $this->DisconnectPowerSocket($this->GetOriginal('powerBsocket_id'));
+    }
+    parent::OnUpdate();
+}]]>
+                    </code>
+                </method>
+                <method id="AfterUpdate" _delta="define">
+                    <static>false</static>
+                    <access>public</access>
+                    <type>Overload-DBObject</type>
+                    <code>
+                        <![CDATA[public function AfterUpdate()
+{
+    // The DC device is updated in DB and PowerSocket was changed
+    if (isset($this->iPowerSocketAChanged))
+        $this->ConnectPowerSocket($this->Get('powerAsocket_id'));
+    if (isset($this->iPowerSocketBChanged))
+        $this->ConnectPowerSocket($this->Get('powerBsocket_id'));
+    parent::AfterUpdate();
+}]]>
+                    </code>
+                </method>
+                <method id="OnDelete" _delta="define">
+                    <static>false</static>
+                    <access>public</access>
+                    <type>Overload-DBObject</type>
+                    <code>
+                        <![CDATA[public function OnDelete()
+{
+    $aChanges = $this->ListChanges();
+    if (array_key_exists('powerAsocket_id', $aChanges))
+        $this->DisconnectPowerSocket($this->Get('powerAsocket_id'));
+    if (array_key_exists('powerBsocket_id', $aChanges))
+        $this->DisconnectPowerSocket($this->Get('powerBsocket_id'));
+    parent::OnDelete();
+}]]>
+                    </code>
+                </method>
+            </methods>
+
             <presentation>
                 <details>
                     <items>
@@ -229,10 +336,10 @@
                 </details>
                 <search>
                     <items>
-                        <item id="powerAsocket_id">
+                        <item id="powerAsocket_id" _delta="define">
                             <rank>101</rank>
                         </item>
-                        <item id="powerBsocket_id">
+                        <item id="powerBsocket_id" _delta="define">
                             <rank>111</rank>
                         </item>
                     </items>
@@ -249,20 +356,11 @@
                                 <item id="fieldset:Server:power" _delta="must_exist">
                                     <rank>20</rank>
                                     <items>
-                                        <item id="powerA_id">
-                                            <rank>10</rank>
-                                        </item>
                                         <item id="powerAsocket_id" _delta="define">
                                             <rank>11</rank>
                                         </item>
-                                        <item id="powerB_id">
-                                            <rank>20</rank>
-                                        </item>
                                         <item id="powerBsocket_id" _delta="define">
                                             <rank>21</rank>
-                                        </item>
-                                        <item id="redundancy">
-                                            <rank>30</rank>
                                         </item>
                                     </items>
                                 </item>
@@ -292,20 +390,11 @@
                                 <item id="fieldset:Server:power" _delta="must_exist">
                                     <rank>20</rank>
                                     <items>
-                                        <item id="powerA_id">
-                                            <rank>10</rank>
-                                        </item>
                                         <item id="powerAsocket_id" _delta="define">
                                             <rank>11</rank>
                                         </item>
-                                        <item id="powerB_id">
-                                            <rank>20</rank>
-                                        </item>
                                         <item id="powerBsocket_id" _delta="define">
                                             <rank>21</rank>
-                                        </item>
-                                        <item id="redundancy">
-                                            <rank>30</rank>
                                         </item>
                                     </items>
                                 </item>
@@ -335,20 +424,11 @@
                                 <item id="fieldset:Server:power" _delta="must_exist">
                                     <rank>20</rank>
                                     <items>
-                                        <item id="powerA_id">
-                                            <rank>10</rank>
-                                        </item>
                                         <item id="powerAsocket_id" _delta="define">
                                             <rank>11</rank>
                                         </item>
-                                        <item id="powerB_id">
-                                            <rank>20</rank>
-                                        </item>
                                         <item id="powerBsocket_id" _delta="define">
                                             <rank>21</rank>
-                                        </item>
-                                        <item id="redundancy">
-                                            <rank>30</rank>
                                         </item>
                                     </items>
                                 </item>
@@ -378,20 +458,11 @@
                                 <item id="fieldset:Server:power" _delta="must_exist">
                                     <rank>20</rank>
                                     <items>
-                                        <item id="powerA_id">
-                                            <rank>10</rank>
-                                        </item>
                                         <item id="powerAsocket_id" _delta="define">
                                             <rank>11</rank>
                                         </item>
-                                        <item id="powerB_id">
-                                            <rank>20</rank>
-                                        </item>
                                         <item id="powerBsocket_id" _delta="define">
                                             <rank>21</rank>
-                                        </item>
-                                        <item id="redundancy">
-                                            <rank>30</rank>
                                         </item>
                                     </items>
                                 </item>
@@ -421,20 +492,11 @@
                                 <item id="fieldset:Server:power" _delta="must_exist">
                                     <rank>20</rank>
                                     <items>
-                                        <item id="powerA_id">
-                                            <rank>10</rank>
-                                        </item>
                                         <item id="powerAsocket_id" _delta="define">
                                             <rank>11</rank>
                                         </item>
-                                        <item id="powerB_id">
-                                            <rank>20</rank>
-                                        </item>
                                         <item id="powerBsocket_id" _delta="define">
                                             <rank>21</rank>
-                                        </item>
-                                        <item id="redundancy">
-                                            <rank>30</rank>
                                         </item>
                                     </items>
                                 </item>
@@ -464,20 +526,11 @@
                                 <item id="fieldset:Server:power" _delta="must_exist">
                                     <rank>20</rank>
                                     <items>
-                                        <item id="powerA_id">
-                                            <rank>10</rank>
-                                        </item>
                                         <item id="powerAsocket_id" _delta="define">
                                             <rank>11</rank>
                                         </item>
-                                        <item id="powerB_id">
-                                            <rank>20</rank>
-                                        </item>
                                         <item id="powerBsocket_id" _delta="define">
                                             <rank>21</rank>
-                                        </item>
-                                        <item id="redundancy">
-                                            <rank>30</rank>
                                         </item>
                                     </items>
                                 </item>
