@@ -573,7 +573,6 @@
     <dictionaries>
         <dictionary id="EN US">
             <entries>
-                <entry id="Class:Location/Attribute:type" _delta="define">Type</entry>
                 <!-- Class: PowerSocket -->
                 <entry id="Class:PowerSocket" _delta="define">Power Socket</entry>
                 <entry id="Class:PowerSocket/Name" _delta="define">%2$s - %1$s</entry>
