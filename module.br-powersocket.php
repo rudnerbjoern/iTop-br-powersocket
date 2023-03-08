@@ -3,14 +3,14 @@
 /**
  * @copyright   Copyright (C) 2022 Björn Rudner
  * @license     https://www.gnu.org/licenses/gpl-3.0.en.html
- * @version     2022-11-08
+ * @version     2023-03-08
  *
  * iTop module definition file
  */
 
 SetupWebPage::AddModule(
     __FILE__, // Path to the current file, all other file names are relative to the directory containing this file
-    'br-powersocket/0.2.0',
+    'br-powersocket/0.2.1',
     array(
         // Identification
         //
@@ -33,7 +33,6 @@ SetupWebPage::AddModule(
         // Components
         //
         'datamodel' => array(
-            'model.br-powersocket.php',
         ),
         'webservice' => array(),
         'data.struct' => array(
