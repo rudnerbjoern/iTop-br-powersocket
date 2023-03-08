@@ -35,12 +35,12 @@
             <fields>
                 <field id="name" xsi:type="AttributeString">
                     <sql>name</sql>
-                    <default_value/>
+                    <default_value />
                     <is_null_allowed>false</is_null_allowed>
                 </field>
                 <field id="comment" xsi:type="AttributeText">
                     <sql>comment</sql>
-                    <default_value/>
+                    <default_value />
                     <is_null_allowed>true</is_null_allowed>
                 </field>
                 <field id="pdu_id" xsi:type="AttributeExternalKey">
@@ -185,7 +185,7 @@
                 <field id="powerAsocket_id" xsi:type="AttributeExternalKey" _delta="define">
                     <filter><![CDATA[SELECT PowerSocket WHERE pdu_id = :this->powerA_id AND datacenterdevice_id = 0]]></filter>
                     <dependencies>
-                        <attribute id="powerA_id"/>
+                        <attribute id="powerA_id" />
                     </dependencies>
                     <sql>powerAsocket_id</sql>
                     <target_class>PowerSocket</target_class>
@@ -200,7 +200,7 @@
                 <field id="powerBsocket_id" xsi:type="AttributeExternalKey" _delta="define">
                     <filter><![CDATA[SELECT PowerSocket WHERE pdu_id = :this->powerB_id AND datacenterdevice_id = 0]]></filter>
                     <dependencies>
-                        <attribute id="powerB_id"/>
+                        <attribute id="powerB_id" />
                     </dependencies>
                     <sql>powerBsocket_id</sql>
                     <target_class>PowerSocket</target_class>
@@ -569,4 +569,60 @@
             </definition>
         </menu>
     </menus>
+
+    <dictionaries>
+        <dictionary id="EN US">
+            <entries>
+                <entry id="Class:Location/Attribute:type" _delta="define">Type</entry>
+                <!-- Class: PowerSocket -->
+                <entry id="Class:PowerSocket" _delta="define">Power Socket</entry>
+                <entry id="Class:PowerSocket/Name" _delta="define">%2$s - %1$s</entry>
+                <entry id="Class:PowerSocket/Attribute:name" _delta="define">Name</entry>
+                <entry id="Class:PowerSocket/Attribute:status" _delta="define">Status</entry>
+                <entry id="Class:PowerSocket/Attribute:comment" _delta="define">Comment</entry>
+                <entry id="Class:PowerSocket/Attribute:pdu_id" _delta="define">PDU</entry>
+                <entry id="Class:PowerSocket/Attribute:pdu_name" _delta="define">PDU name</entry>
+                <entry id="Class:PowerSocket/Attribute:datacenterdevice_id" _delta="define">Datacenter device</entry>
+                <entry id="Class:PowerSocket/Attribute:datacenterdevice_name" _delta="define">Datacenter device name</entry>
+                <!-- Class: PDU -->
+                <entry id="Class:PDU/Attribute:powersocket_list" _delta="define">Power Sockets</entry>
+                <entry id="Class:PDU/Attribute:powersocket_list+" _delta="define"></entry>
+                <!-- Class: DatacenterDevice -->
+                <entry id="Class:DatacenterDevice/Attribute:powerAsocket_id" _delta="define">PowerA socket</entry>
+                <entry id="Class:DatacenterDevice/Attribute:powerAsocket_id+" _delta="define"></entry>
+                <entry id="Class:DatacenterDevice/Attribute:powerAsocket_name" _delta="define">PowerA socket name</entry>
+                <entry id="Class:DatacenterDevice/Attribute:powerAsocket_name+" _delta="define"></entry>
+                <entry id="Class:DatacenterDevice/Attribute:powerBsocket_id" _delta="define">PowerB socket</entry>
+                <entry id="Class:DatacenterDevice/Attribute:powerBsocket_id+" _delta="define"></entry>
+                <entry id="Class:DatacenterDevice/Attribute:powerBsocket_name" _delta="define">PowerB socket name</entry>
+                <entry id="Class:DatacenterDevice/Attribute:powerBsocket_name+" _delta="define"></entry>
+            </entries>
+        </dictionary>
+        <dictionary id="DE DE">
+            <entries>
+                <!-- Class: PowerSocket -->
+                <entry id="Class:PowerSocket" _delta="define">Stromanschluss</entry>
+                <entry id="Class:PowerSocket/Name" _delta="define">%2$s - %1$s</entry>
+                <entry id="Class:PowerSocket/Attribute:name" _delta="define">Name</entry>
+                <entry id="Class:PowerSocket/Attribute:status" _delta="define">Status</entry>
+                <entry id="Class:PowerSocket/Attribute:comment" _delta="define">Kommentar</entry>
+                <entry id="Class:PowerSocket/Attribute:pdu_id" _delta="define">PDU</entry>
+                <entry id="Class:PowerSocket/Attribute:pdu_name" _delta="define">PDU Name</entry>
+                <entry id="Class:PowerSocket/Attribute:datacenterdevice_id" _delta="define">Datacenter-Gerät</entry>
+                <entry id="Class:PowerSocket/Attribute:datacenterdevice_name" _delta="define">Datacenter-Gerät Name</entry>
+                <!-- Class: PDU -->
+                <entry id="Class:PDU/Attribute:powersocket_list" _delta="define">Stromanschlüsse</entry>
+                <entry id="Class:PDU/Attribute:powersocket_list+" _delta="define"></entry>
+                <!-- Class: DatacenterDevice -->
+                <entry id="Class:DatacenterDevice/Attribute:powerAsocket_id" _delta="define">PowerA-Anschluss</entry>
+                <entry id="Class:DatacenterDevice/Attribute:powerAsocket_id+" _delta="define"></entry>
+                <entry id="Class:DatacenterDevice/Attribute:powerAsocket_name" _delta="define">PowerA-Anschluss Name</entry>
+                <entry id="Class:DatacenterDevice/Attribute:powerAsocket_name+" _delta="define"></entry>
+                <entry id="Class:DatacenterDevice/Attribute:powerBsocket_id" _delta="define">PowerB-Anschluss</entry>
+                <entry id="Class:DatacenterDevice/Attribute:powerBsocket_id+" _delta="define"></entry>
+                <entry id="Class:DatacenterDevice/Attribute:powerBsocket_name" _delta="define">PowerB-Anschluss Name</entry>
+                <entry id="Class:DatacenterDevice/Attribute:powerBsocket_name+" _delta="define"></entry>
+            </entries>
+        </dictionary>
+    </dictionaries>
 </itop_design>
