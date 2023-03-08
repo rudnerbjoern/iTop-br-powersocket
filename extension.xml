@@ -11,7 +11,7 @@
         <![CDATA[Datamodel: Powersocket]]>
     </label>
     <description>
-        <![CDATA[Adds the ability to add Powersockets to PDUs and lik them to CIs]]>
+        <![CDATA[Adds the ability to add Powersockets to PDUs and link them to CIs]]>
     </description>
     <version>0.2.1</version>
     <release_date>2023-03-08</release_date>
