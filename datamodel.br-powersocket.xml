@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <itop_design xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.7">
-    <!--
-    * @license     https://www.gnu.org/licenses/gpl-3.0.en.html
-    -->
     <classes>
         <class id="PowerSocket" _delta="define">
             <parent>cmdbAbstractObject</parent>
             <properties>
+                <comment><![CDATA[/**
+ * @copyright   Copyright (C) 2022-2023 Björn Rudner
+ * @license     https://www.gnu.org/licenses/gpl-3.0.en.html
+ */]]></comment>
                 <category>bizmodel,searchable</category>
                 <abstract>false</abstract>
                 <key_type>autoincrement</key_type>
@@ -19,7 +20,12 @@
                         <attribute id="pdu_name" />
                     </attributes>
                 </naming>
-                <display_template />
+                <fields_semantic>
+                    <state_attribute>status</state_attribute>
+                </fields_semantic>
+                <style>
+                    <icon>images/powersocket.png</icon>
+                </style>
                 <icon>images/powersocket.png</icon>
                 <reconciliation>
                     <attributes>
@@ -53,7 +59,7 @@
                     <extkey_attcode>pdu_id</extkey_attcode>
                     <target_attcode>name</target_attcode>
                 </field>
-                <field id="status" xsi:type="AttributeEnum" _altered_in="teemip-config-mgmt-adaptor">
+                <field id="status" xsi:type="AttributeEnum">
                     <values>
                         <value id="stock">stock</value>
                         <value id="active">active</value>
