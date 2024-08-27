@@ -97,6 +97,9 @@
             } elseif ($oObject->Get('powerBsocket_id') == 0) {
                 $oObject->Set('powerBsocket_id', $this->GetKey());
                 $oObject->DBUpdate();
+            } else {
+                // unable to connect to powerAsocket or powerBsocket - so remove connection again
+                $this->Set('datacenterdevice_id','')
             }
         }
     }
