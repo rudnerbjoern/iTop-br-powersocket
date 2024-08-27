@@ -4,10 +4,6 @@
         <class id="PowerSocket" _delta="define">
             <parent>cmdbAbstractObject</parent>
             <properties>
-                <comment><![CDATA[/**
- * @copyright   Copyright (C) 2022-2023 Björn Rudner
- * @license     https://www.gnu.org/licenses/gpl-3.0.en.html
- */]]></comment>
                 <category>bizmodel,searchable</category>
                 <abstract>false</abstract>
                 <key_type>autoincrement</key_type>
@@ -24,7 +20,7 @@
                     <state_attribute>status</state_attribute>
                 </fields_semantic>
                 <style>
-                    <icon>images/powersocket.png</icon>
+                    <icon>images/powersocket.svg</icon>
                 </style>
                 <icon>images/powersocket.png</icon>
                 <reconciliation>
@@ -82,7 +78,120 @@
                     <target_attcode>name</target_attcode>
                 </field>
             </fields>
-            <methods />
+            <methods>
+                <method id="ConnectPowerSocket" _delta="define">
+                    <static>false</static>
+                    <access>public</access>
+                    <type>Overload-cmdbAbstractObject</type>
+                    <code>
+                        <![CDATA[public function ConnectPowerSocket($datacenterdevice_id)
+{
+    if ($datacenterdevice_id != 0) {
+        $oObject = MetaModel::GetObject('DatacenterDevice', $datacenterdevice_id, false);
+        // FYI: MetaModel::GetObject('DatacenterDevice', 0); generates a FatalError
+        if (is_object($oObject)) {
+        // find powerAsocket_id or powerBsocket_id to be empty
+            if ($oObject->Get('powerAsocket_id') == 0) {
+                $oObject->Set('powerAsocket_id', $this->GetKey());
+                $oObject->DBUpdate();
+            } elseif ($oObject->Get('powerBsocket_id') == 0) {
+                $oObject->Set('powerBsocket_id', $this->GetKey());
+                $oObject->DBUpdate();
+            } else {
+                // unable to connect to powerAsocket or powerBsocket - so remove connection again
+                $this->Set('datacenterdevice_id','');
+
+                $this->SetSessionMessageFromInstance('powersocket-1', 'Could not assign PowerSocket to DatacenterDevice, no free socket available', 'error', 1);
+            }
+        }
+    }
+}]]>
+                    </code>
+                </method>
+                <method id="DisconnectPowerSocket" _delta="define">
+                    <static>false</static>
+                    <access>public</access>
+                    <type>Overload-cmdbAbstractObject</type>
+                    <code>
+                        <![CDATA[public function DisconnectPowerSocket($datacenterdevice_id)
+{
+    if ($datacenterdevice_id != 0) {
+        $oObject = MetaModel::GetObject('DatacenterDevice', $datacenterdevice_id, false);
+        // FYI: MetaModel::GetObject('DatacenterDevice', 0); generates a FatalError
+        if (is_object($oObject)) {
+            // find powerAsocket_id or powerBsocket_id
+            if ($oObject->Get('powerAsocket_id') == $this->GetKey()) {
+                $oObject->Set('powerAsocket_id', '');
+                $oObject->DBUpdate();
+            } elseif ($oObject->Get('powerBsocket_id') == $this->GetKey()) {
+                $oObject->Set('powerBsocket_id', '');
+                $oObject->DBUpdate();
+            }
+        }
+    }
+}]]>
+                    </code>
+                </method>
+                <method id="AfterInsert" _delta="define">
+                    <static>false</static>
+                    <access>public</access>
+                    <type>Overload-DBObject</type>
+                    <code>
+                        <![CDATA[public function AfterInsert()
+{
+    if ($this->Get('datacenterdevice_id') != 0)
+        $this->ConnectPowerSocket($this->Get('datacenterdevice_id'));
+    parent::AfterInsert();
+}]]>
+                    </code>
+                </method>
+                <method id="OnUpdate" _delta="define">
+                    <static>false</static>
+                    <access>public</access>
+                    <type>Overload-DBObject</type>
+                    <code>
+                        <![CDATA[public function OnUpdate()
+{
+    $aChanges = $this->ListChanges();
+    if (array_key_exists('datacenterdevice_id', $aChanges)) {
+        // record in the memory object that the DatacenterDevice was changed
+        $this->iDatacenterDeviceChanged = true;
+        // disconnect the old DatacenterDevice
+        $this->DisconnectPowerSocket($this->GetOriginal('datacenterdevice_id'));
+    }
+    parent::OnUpdate();
+}]]>
+                    </code>
+                </method>
+                <method id="AfterUpdate" _delta="define">
+                    <static>false</static>
+                    <access>public</access>
+                    <type>Overload-DBObject</type>
+                    <code>
+                        <![CDATA[public function AfterUpdate()
+{
+    // The PowerSocket is updated in DB and DatacenterDevice was changed
+    if (isset($this->iDatacenterDeviceChanged))
+        $this->ConnectPowerSocket($this->Get('datacenterdevice_id'));
+    parent::AfterUpdate();
+}]]>
+                    </code>
+                </method>
+                <method id="OnDelete" _delta="define">
+                    <static>false</static>
+                    <access>public</access>
+                    <type>Overload-DBObject</type>
+                    <code>
+                        <![CDATA[public function OnDelete()
+{
+    $aChanges = $this->ListChanges();
+    if (array_key_exists('datacenterdevice_id', $aChanges))
+        $this->DisconnectPowerSocket($this->Get('datacenterdevice_id'));
+    parent::OnDelete();
+}]]>
+                    </code>
+                </method>
+            </methods>
             <relations>
                 <relation id="impacts">
                     <neighbours>
@@ -162,7 +271,6 @@
                 </default_search>
             </presentation>
         </class>
-
         <class id="PDU" _delta="must_exist">
             <fields>
                 <field id="powersocket_list" xsi:type="AttributeLinkedSet" _delta="define">
@@ -185,7 +293,6 @@
                 </details>
             </presentation>
         </class>
-
         <class id="DatacenterDevice" _delta="must_exist">
             <fields>
                 <field id="powerAsocket_id" xsi:type="AttributeExternalKey" _delta="define">
@@ -219,7 +326,6 @@
                     <target_attcode>name</target_attcode>
                 </field>
             </fields>
-
             <methods>
                 <method id="ConnectPowerSocket" _delta="define">
                     <static>false</static>
@@ -329,7 +435,6 @@
                     </code>
                 </method>
             </methods>
-
             <presentation>
                 <details>
                     <items>
@@ -353,7 +458,6 @@
                 </search>
             </presentation>
         </class>
-
         <class id="Server" _delta="must_exist">
             <presentation>
                 <details>
@@ -387,7 +491,6 @@
                 </search>
             </presentation>
         </class>
-
         <class id="NetworkDevice" _delta="must_exist">
             <presentation>
                 <details>
@@ -421,7 +524,6 @@
                 </search>
             </presentation>
         </class>
-
         <class id="StorageSystem" _delta="must_exist">
             <presentation>
                 <details>
@@ -455,7 +557,6 @@
                 </search>
             </presentation>
         </class>
-
         <class id="SANSwitch" _delta="must_exist">
             <presentation>
                 <details>
@@ -489,7 +590,6 @@
                 </search>
             </presentation>
         </class>
-
         <class id="TapeLibrary" _delta="must_exist">
             <presentation>
                 <details>
@@ -523,7 +623,6 @@
                 </search>
             </presentation>
         </class>
-
         <class id="NAS" _delta="must_exist">
             <presentation>
                 <details>
@@ -558,7 +657,6 @@
             </presentation>
         </class>
     </classes>
-
     <menus>
         <menu id="ConfigManagementOverview" xsi:type="DashboardMenuNode" _delta="must_exist">
             <definition>
@@ -575,59 +673,4 @@
             </definition>
         </menu>
     </menus>
-
-    <dictionaries>
-        <dictionary id="EN US">
-            <entries>
-                <!-- Class: PowerSocket -->
-                <entry id="Class:PowerSocket" _delta="define">Power Socket</entry>
-                <entry id="Class:PowerSocket/Name" _delta="define">%2$s - %1$s</entry>
-                <entry id="Class:PowerSocket/Attribute:name" _delta="define">Name</entry>
-                <entry id="Class:PowerSocket/Attribute:status" _delta="define">Status</entry>
-                <entry id="Class:PowerSocket/Attribute:comment" _delta="define">Comment</entry>
-                <entry id="Class:PowerSocket/Attribute:pdu_id" _delta="define">PDU</entry>
-                <entry id="Class:PowerSocket/Attribute:pdu_name" _delta="define">PDU name</entry>
-                <entry id="Class:PowerSocket/Attribute:datacenterdevice_id" _delta="define">Datacenter device</entry>
-                <entry id="Class:PowerSocket/Attribute:datacenterdevice_name" _delta="define">Datacenter device name</entry>
-                <!-- Class: PDU -->
-                <entry id="Class:PDU/Attribute:powersocket_list" _delta="define">Power Sockets</entry>
-                <entry id="Class:PDU/Attribute:powersocket_list+" _delta="define"></entry>
-                <!-- Class: DatacenterDevice -->
-                <entry id="Class:DatacenterDevice/Attribute:powerAsocket_id" _delta="define">PowerA socket</entry>
-                <entry id="Class:DatacenterDevice/Attribute:powerAsocket_id+" _delta="define"></entry>
-                <entry id="Class:DatacenterDevice/Attribute:powerAsocket_name" _delta="define">PowerA socket name</entry>
-                <entry id="Class:DatacenterDevice/Attribute:powerAsocket_name+" _delta="define"></entry>
-                <entry id="Class:DatacenterDevice/Attribute:powerBsocket_id" _delta="define">PowerB socket</entry>
-                <entry id="Class:DatacenterDevice/Attribute:powerBsocket_id+" _delta="define"></entry>
-                <entry id="Class:DatacenterDevice/Attribute:powerBsocket_name" _delta="define">PowerB socket name</entry>
-                <entry id="Class:DatacenterDevice/Attribute:powerBsocket_name+" _delta="define"></entry>
-            </entries>
-        </dictionary>
-        <dictionary id="DE DE">
-            <entries>
-                <!-- Class: PowerSocket -->
-                <entry id="Class:PowerSocket" _delta="define">Stromanschluss</entry>
-                <entry id="Class:PowerSocket/Name" _delta="define">%2$s - %1$s</entry>
-                <entry id="Class:PowerSocket/Attribute:name" _delta="define">Name</entry>
-                <entry id="Class:PowerSocket/Attribute:status" _delta="define">Status</entry>
-                <entry id="Class:PowerSocket/Attribute:comment" _delta="define">Kommentar</entry>
-                <entry id="Class:PowerSocket/Attribute:pdu_id" _delta="define">PDU</entry>
-                <entry id="Class:PowerSocket/Attribute:pdu_name" _delta="define">PDU Name</entry>
-                <entry id="Class:PowerSocket/Attribute:datacenterdevice_id" _delta="define">Datacenter-Gerät</entry>
-                <entry id="Class:PowerSocket/Attribute:datacenterdevice_name" _delta="define">Datacenter-Gerät Name</entry>
-                <!-- Class: PDU -->
-                <entry id="Class:PDU/Attribute:powersocket_list" _delta="define">Stromanschlüsse</entry>
-                <entry id="Class:PDU/Attribute:powersocket_list+" _delta="define"></entry>
-                <!-- Class: DatacenterDevice -->
-                <entry id="Class:DatacenterDevice/Attribute:powerAsocket_id" _delta="define">PowerA-Anschluss</entry>
-                <entry id="Class:DatacenterDevice/Attribute:powerAsocket_id+" _delta="define"></entry>
-                <entry id="Class:DatacenterDevice/Attribute:powerAsocket_name" _delta="define">PowerA-Anschluss Name</entry>
-                <entry id="Class:DatacenterDevice/Attribute:powerAsocket_name+" _delta="define"></entry>
-                <entry id="Class:DatacenterDevice/Attribute:powerBsocket_id" _delta="define">PowerB-Anschluss</entry>
-                <entry id="Class:DatacenterDevice/Attribute:powerBsocket_id+" _delta="define"></entry>
-                <entry id="Class:DatacenterDevice/Attribute:powerBsocket_name" _delta="define">PowerB-Anschluss Name</entry>
-                <entry id="Class:DatacenterDevice/Attribute:powerBsocket_name+" _delta="define"></entry>
-            </entries>
-        </dictionary>
-    </dictionaries>
 </itop_design>
