@@ -78,7 +78,115 @@
                     <target_attcode>name</target_attcode>
                 </field>
             </fields>
-            <methods />
+            <methods>
+                <method id="ConnectPowerSocket" _delta="define">
+                    <static>false</static>
+                    <access>public</access>
+                    <type>Overload-cmdbAbstractObject</type>
+                    <code>
+                        <![CDATA[public function ConnectPowerSocket($datacenterdevice_id)
+{
+    if ($datacenterdevice_id != 0) {
+        $oObject = MetaModel::GetObject('DatacenterDevice', $datacenterdevice_id, false);
+        // FYI: MetaModel::GetObject('DatacenterDevice', 0); generates a FatalError
+        if (is_object($oObject)) {
+        // find powerAsocket_id or powerBsocket_id to be empty
+            if ($oObject->Get('powerAsocket_id') == 0) {
+                $oObject->Set('powerAsocket_id', $this->GetKey());
+                $oObject->DBUpdate();
+            } elseif ($oObject->Get('powerBsocket_id') == 0) {
+                $oObject->Set('powerBsocket_id', $this->GetKey());
+                $oObject->DBUpdate();
+            }
+        }
+    }
+}]]>
+                    </code>
+                </method>
+                <method id="DisconnectPowerSocket" _delta="define">
+                    <static>false</static>
+                    <access>public</access>
+                    <type>Overload-cmdbAbstractObject</type>
+                    <code>
+                        <![CDATA[public function DisconnectPowerSocket($datacenterdevice_id)
+{
+    if ($datacenterdevice_id != 0) {
+        $oObject = MetaModel::GetObject('DatacenterDevice', $datacenterdevice_id, false);
+        // FYI: MetaModel::GetObject('DatacenterDevice', 0); generates a FatalError
+        if (is_object($oObject)) {
+            // find powerAsocket_id or powerBsocket_id
+            if ($oObject->Get('powerAsocket_id') == $this->GetKey()) {
+                $oObject->Set('powerAsocket_id', '');
+                $oObject->DBUpdate();
+            } elseif ($oObject->Get('powerBsocket_id') == $this->GetKey()) {
+                $oObject->Set('powerBsocket_id', '');
+                $oObject->DBUpdate();
+            }
+        }
+    }
+}]]>
+                    </code>
+                </method>
+                <method id="AfterInsert" _delta="define">
+                    <static>false</static>
+                    <access>public</access>
+                    <type>Overload-DBObject</type>
+                    <code>
+                        <![CDATA[public function AfterInsert()
+{
+    if ($this->Get('datacenterdevice_id') != 0)
+        $this->ConnectPowerSocket($this->Get('datacenterdevice_id'));
+    parent::AfterInsert();
+}]]>
+                    </code>
+                </method>
+                <method id="OnUpdate" _delta="define">
+                    <static>false</static>
+                    <access>public</access>
+                    <type>Overload-DBObject</type>
+                    <code>
+                        <![CDATA[public function OnUpdate()
+{
+    $aChanges = $this->ListChanges();
+    if (array_key_exists('datacenterdevice_id', $aChanges)) {
+        // record in the memory object that the DatacenterDevice was changed
+        $this->iDatacenterDeviceChanged = true;
+        // disconnect the old DatacenterDevice
+        $this->DisconnectPowerSocket($this->GetOriginal('datacenterdevice_id'));
+    }
+    parent::OnUpdate();
+}]]>
+                    </code>
+                </method>
+                <method id="AfterUpdate" _delta="define">
+                    <static>false</static>
+                    <access>public</access>
+                    <type>Overload-DBObject</type>
+                    <code>
+                        <![CDATA[public function AfterUpdate()
+{
+    // The PowerSocket is updated in DB and DatacenterDevice was changed
+    if (isset($this->iDatacenterDeviceChanged))
+        $this->ConnectPowerSocket($this->Get('datacenterdevice_id'));
+    parent::AfterUpdate();
+}]]>
+                    </code>
+                </method>
+                <method id="OnDelete" _delta="define">
+                    <static>false</static>
+                    <access>public</access>
+                    <type>Overload-DBObject</type>
+                    <code>
+                        <![CDATA[public function OnDelete()
+{
+    $aChanges = $this->ListChanges();
+    if (array_key_exists('datacenterdevice_id', $aChanges))
+        $this->DisconnectPowerSocket($this->Get('datacenterdevice_id'));
+    parent::OnDelete();
+}]]>
+                    </code>
+                </method>
+            </methods>
             <relations>
                 <relation id="impacts">
                     <neighbours>
