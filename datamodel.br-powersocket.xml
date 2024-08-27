@@ -100,6 +100,8 @@
             } else {
                 // unable to connect to powerAsocket or powerBsocket - so remove connection again
                 $this->Set('datacenterdevice_id','');
+
+                $this->SetSessionMessageFromInstance('powersocket-1', 'Could not assign PowerSocket to DatacenterDevice, no free socket available', 'error', 1);
             }
         }
     }
