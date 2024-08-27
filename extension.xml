@@ -13,8 +13,8 @@
     <description>
         <![CDATA[Adds the ability to add Powersockets to PDUs and link them to CIs]]>
     </description>
-    <version>0.2.1</version>
-    <release_date>2023-03-08</release_date>
+    <version>0.3.0</version>
+    <release_date>2024-08-27</release_date>
     <version_description>
         <![CDATA[]]>
     </version_description>
