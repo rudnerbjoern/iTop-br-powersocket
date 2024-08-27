@@ -24,7 +24,7 @@
                     <state_attribute>status</state_attribute>
                 </fields_semantic>
                 <style>
-                    <icon>images/powersocket.png</icon>
+                    <icon>images/powersocket.svg</icon>
                 </style>
                 <icon>images/powersocket.png</icon>
                 <reconciliation>
