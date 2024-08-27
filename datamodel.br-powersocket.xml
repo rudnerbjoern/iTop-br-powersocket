@@ -4,10 +4,6 @@
         <class id="PowerSocket" _delta="define">
             <parent>cmdbAbstractObject</parent>
             <properties>
-                <comment><![CDATA[/**
- * @copyright   Copyright (C) 2022-2023 Björn Rudner
- * @license     https://www.gnu.org/licenses/gpl-3.0.en.html
- */]]></comment>
                 <category>bizmodel,searchable</category>
                 <abstract>false</abstract>
                 <key_type>autoincrement</key_type>
@@ -162,7 +158,6 @@
                 </default_search>
             </presentation>
         </class>
-
         <class id="PDU" _delta="must_exist">
             <fields>
                 <field id="powersocket_list" xsi:type="AttributeLinkedSet" _delta="define">
@@ -185,7 +180,6 @@
                 </details>
             </presentation>
         </class>
-
         <class id="DatacenterDevice" _delta="must_exist">
             <fields>
                 <field id="powerAsocket_id" xsi:type="AttributeExternalKey" _delta="define">
@@ -219,7 +213,6 @@
                     <target_attcode>name</target_attcode>
                 </field>
             </fields>
-
             <methods>
                 <method id="ConnectPowerSocket" _delta="define">
                     <static>false</static>
@@ -329,7 +322,6 @@
                     </code>
                 </method>
             </methods>
-
             <presentation>
                 <details>
                     <items>
@@ -353,7 +345,6 @@
                 </search>
             </presentation>
         </class>
-
         <class id="Server" _delta="must_exist">
             <presentation>
                 <details>
@@ -387,7 +378,6 @@
                 </search>
             </presentation>
         </class>
-
         <class id="NetworkDevice" _delta="must_exist">
             <presentation>
                 <details>
@@ -421,7 +411,6 @@
                 </search>
             </presentation>
         </class>
-
         <class id="StorageSystem" _delta="must_exist">
             <presentation>
                 <details>
@@ -455,7 +444,6 @@
                 </search>
             </presentation>
         </class>
-
         <class id="SANSwitch" _delta="must_exist">
             <presentation>
                 <details>
@@ -489,7 +477,6 @@
                 </search>
             </presentation>
         </class>
-
         <class id="TapeLibrary" _delta="must_exist">
             <presentation>
                 <details>
@@ -523,7 +510,6 @@
                 </search>
             </presentation>
         </class>
-
         <class id="NAS" _delta="must_exist">
             <presentation>
                 <details>
@@ -558,7 +544,6 @@
             </presentation>
         </class>
     </classes>
-
     <menus>
         <menu id="ConfigManagementOverview" xsi:type="DashboardMenuNode" _delta="must_exist">
             <definition>
@@ -575,59 +560,4 @@
             </definition>
         </menu>
     </menus>
-
-    <dictionaries>
-        <dictionary id="EN US">
-            <entries>
-                <!-- Class: PowerSocket -->
-                <entry id="Class:PowerSocket" _delta="define">Power Socket</entry>
-                <entry id="Class:PowerSocket/Name" _delta="define">%2$s - %1$s</entry>
-                <entry id="Class:PowerSocket/Attribute:name" _delta="define">Name</entry>
-                <entry id="Class:PowerSocket/Attribute:status" _delta="define">Status</entry>
-                <entry id="Class:PowerSocket/Attribute:comment" _delta="define">Comment</entry>
-                <entry id="Class:PowerSocket/Attribute:pdu_id" _delta="define">PDU</entry>
-                <entry id="Class:PowerSocket/Attribute:pdu_name" _delta="define">PDU name</entry>
-                <entry id="Class:PowerSocket/Attribute:datacenterdevice_id" _delta="define">Datacenter device</entry>
-                <entry id="Class:PowerSocket/Attribute:datacenterdevice_name" _delta="define">Datacenter device name</entry>
-                <!-- Class: PDU -->
-                <entry id="Class:PDU/Attribute:powersocket_list" _delta="define">Power Sockets</entry>
-                <entry id="Class:PDU/Attribute:powersocket_list+" _delta="define"></entry>
-                <!-- Class: DatacenterDevice -->
-                <entry id="Class:DatacenterDevice/Attribute:powerAsocket_id" _delta="define">PowerA socket</entry>
-                <entry id="Class:DatacenterDevice/Attribute:powerAsocket_id+" _delta="define"></entry>
-                <entry id="Class:DatacenterDevice/Attribute:powerAsocket_name" _delta="define">PowerA socket name</entry>
-                <entry id="Class:DatacenterDevice/Attribute:powerAsocket_name+" _delta="define"></entry>
-                <entry id="Class:DatacenterDevice/Attribute:powerBsocket_id" _delta="define">PowerB socket</entry>
-                <entry id="Class:DatacenterDevice/Attribute:powerBsocket_id+" _delta="define"></entry>
-                <entry id="Class:DatacenterDevice/Attribute:powerBsocket_name" _delta="define">PowerB socket name</entry>
-                <entry id="Class:DatacenterDevice/Attribute:powerBsocket_name+" _delta="define"></entry>
-            </entries>
-        </dictionary>
-        <dictionary id="DE DE">
-            <entries>
-                <!-- Class: PowerSocket -->
-                <entry id="Class:PowerSocket" _delta="define">Stromanschluss</entry>
-                <entry id="Class:PowerSocket/Name" _delta="define">%2$s - %1$s</entry>
-                <entry id="Class:PowerSocket/Attribute:name" _delta="define">Name</entry>
-                <entry id="Class:PowerSocket/Attribute:status" _delta="define">Status</entry>
-                <entry id="Class:PowerSocket/Attribute:comment" _delta="define">Kommentar</entry>
-                <entry id="Class:PowerSocket/Attribute:pdu_id" _delta="define">PDU</entry>
-                <entry id="Class:PowerSocket/Attribute:pdu_name" _delta="define">PDU Name</entry>
-                <entry id="Class:PowerSocket/Attribute:datacenterdevice_id" _delta="define">Datacenter-Gerät</entry>
-                <entry id="Class:PowerSocket/Attribute:datacenterdevice_name" _delta="define">Datacenter-Gerät Name</entry>
-                <!-- Class: PDU -->
-                <entry id="Class:PDU/Attribute:powersocket_list" _delta="define">Stromanschlüsse</entry>
-                <entry id="Class:PDU/Attribute:powersocket_list+" _delta="define"></entry>
-                <!-- Class: DatacenterDevice -->
-                <entry id="Class:DatacenterDevice/Attribute:powerAsocket_id" _delta="define">PowerA-Anschluss</entry>
-                <entry id="Class:DatacenterDevice/Attribute:powerAsocket_id+" _delta="define"></entry>
-                <entry id="Class:DatacenterDevice/Attribute:powerAsocket_name" _delta="define">PowerA-Anschluss Name</entry>
-                <entry id="Class:DatacenterDevice/Attribute:powerAsocket_name+" _delta="define"></entry>
-                <entry id="Class:DatacenterDevice/Attribute:powerBsocket_id" _delta="define">PowerB-Anschluss</entry>
-                <entry id="Class:DatacenterDevice/Attribute:powerBsocket_id+" _delta="define"></entry>
-                <entry id="Class:DatacenterDevice/Attribute:powerBsocket_name" _delta="define">PowerB-Anschluss Name</entry>
-                <entry id="Class:DatacenterDevice/Attribute:powerBsocket_name+" _delta="define"></entry>
-            </entries>
-        </dictionary>
-    </dictionaries>
 </itop_design>

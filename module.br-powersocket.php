@@ -1,9 +1,9 @@
 <?php
 
 /**
- * @copyright   Copyright (C) 2022 Björn Rudner
+ * @copyright   Copyright (C) 2022-2024 Björn Rudner
  * @license     https://www.gnu.org/licenses/gpl-3.0.en.html
- * @version     2023-03-08
+ * @version     2024-08-27
  *
  * iTop module definition file
  */
@@ -32,8 +32,7 @@ SetupWebPage::AddModule(
 
         // Components
         //
-        'datamodel' => array(
-        ),
+        'datamodel' => array(),
         'webservice' => array(),
         'data.struct' => array(
             // add your 'structure' definition XML files here,
