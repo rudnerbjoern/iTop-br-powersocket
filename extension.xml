@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <extension format="1.0">
-    <extension_code>br-cabling</extension_code>
+    <extension_code>
+        <![CDATA[br-powersocket]]>
+    </extension_code>
     <company>
         <![CDATA[]]>
     </company>
