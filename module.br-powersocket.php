@@ -3,14 +3,14 @@
 /**
  * @copyright   Copyright (C) 2022-2024 Björn Rudner
  * @license     https://www.gnu.org/licenses/gpl-3.0.en.html
- * @version     2024-09-02
+ * @version     2024-09-05
  *
  * iTop module definition file
  */
 
 SetupWebPage::AddModule(
     __FILE__, // Path to the current file, all other file names are relative to the directory containing this file
-    'br-powersocket/0.3.1',
+    'br-powersocket/3.1.4',
     array(
         // Identification
         //
@@ -20,7 +20,7 @@ SetupWebPage::AddModule(
         // Setup
         //
         'dependencies' => array(
-            '(itop-config-mgmt/2.5.0 & itop-config-mgmt/<3.0.0)||itop-structure/3.0.0',
+            'itop-structure/3.0.0',
             'itop-datacenter-mgmt/2.7.0',
             'teemip-datacenter-mgmt-adaptor/2.7.0',
             'teemip-network-mgmt-extended/1.1.0',
@@ -32,9 +32,7 @@ SetupWebPage::AddModule(
 
         // Components
         //
-        'datamodel' => array(
-            'model.br-powersocket.php',
-        ),
+        'datamodel' => array(),
         'webservice' => array(),
         'data.struct' => array(
             // add your 'structure' definition XML files here,
