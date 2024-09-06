@@ -7,6 +7,14 @@ Copyright (c) 2021-2024 Björn Rudner
 
 Add power sockets to PDUs
 
+### Power Supply
+
+![Power Supply](Screenshots/PowerSupply.png)
+
+### PDU
+
+![PDU](Screenshots/PDU.png)
+
 ## iTop Compatibility
 
 The branch [2.7.10](https://github.com/rudnerbjoern/iTop-br-powersocket/tree/itop/2.7.10) is compatible to iTop 2.7 and iTop 3.1.
