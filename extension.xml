@@ -20,7 +20,7 @@
     <version_description>
         <![CDATA[]]>
     </version_description>
-    <itop_version_min>3.0.0</itop_version_min>
+    <itop_version_min>3.1.0</itop_version_min>
     <status>stable</status>
     <mandatory>false</mandatory>
     <more_info_url>

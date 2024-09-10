@@ -29,4 +29,4 @@ The extension was tested on iTop 2.7.10 and 3.1.1
 
 This Extension uses Icons from:
 
-![power connector](images/powersocket.png) by Arthur Shlain from <https://thenounproject.com/browse/icons/term/power-connector/>
+![power connector](br-powersocket/images/powersocket.png) by Arthur Shlain from <https://thenounproject.com/browse/icons/term/power-connector/>
