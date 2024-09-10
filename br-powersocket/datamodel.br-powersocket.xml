@@ -34,6 +34,13 @@
                     <condition>pdu_id_obsolescence_flag</condition>
                 </obsolescence>
             </properties>
+            <event_listeners>
+                <event_listener id="CheckPowerSocketUpdate">
+                    <event>EVENT_DB_CHECK_TO_WRITE</event>
+                    <callback>CheckPowerSocketOnUpdate</callback>
+                    <rank>1</rank>
+                </event_listener>
+            </event_listeners>
             <fields>
                 <field id="name" xsi:type="AttributeString">
                     <sql>name</sql>
@@ -79,30 +86,30 @@
                 </field>
             </fields>
             <methods>
-                <method id="DoCheckToWrite" _delta="define">
-                    <comment>/**
-* Check availability of PDU/PowerSocket on Target before creation
-*/</comment>
+                <method id="CheckPowerSocketOnUpdate">
                     <static>false</static>
                     <access>public</access>
-                    <type>Overload-DBObject</type>
+                    <type>EventListener</type>
                     <code>
-                        <![CDATA[function DoCheckToWrite()
+                        <![CDATA[public function CheckPowerSocketOnUpdate(Combodo\iTop\Service\Events\EventData $oEventData)
 {
-    // Run standard iTop checks first
-    parent::DoCheckToWrite();
-    // Make sure there is a free socket on the target
-    if ($this->Get('datacenterdevice_id') != 0) {
-        $datacenterdevice_id = $this->Get('datacenterdevice_id');
-        $oDatacenterDeviceObject = MetaModel::GetObject('DatacenterDevice', $datacenterdevice_id, false);
-        if (is_object($oDatacenterDeviceObject)) {
-            // Check if PowerSockets are already connected
-            if (($oDatacenterDeviceObject->Get('powerAsocket_id') != 0) && ($oDatacenterDeviceObject->Get('powerBsocket_id') != 0)) {
-                // Check if we are not already connected
-                if (($oDatacenterDeviceObject->Get('powerAsocket_id') != $this->GetKey()) && ($oDatacenterDeviceObject->Get('powerBsocket_id') != $this->GetKey())) {
-                    // Generate Error Message
-                    $this->m_aCheckIssues[] = Dict::Format('Class:PowerSocket/Error:NoFreePowerSocketOnDatacenterDevice');
-                    return;
+    // This method will block the PowerSocket modification, by adding a Check Issue
+    $aChanges = $this->ListChanges();
+
+    // Current User may not be allowed to see User class, so we can't use
+    if (array_key_exists('datacenterdevice_id', $aChanges)) {
+        // Make sure there is a free socket on the target
+        if ($this->Get('datacenterdevice_id') != 0) {
+            $datacenterdevice_id = $this->Get('datacenterdevice_id');
+            $oDatacenterDeviceObject = MetaModel::GetObject('DatacenterDevice', $datacenterdevice_id, false);
+            if (is_object($oDatacenterDeviceObject)) {
+                // Check if PowerSockets are already connected
+                if (($oDatacenterDeviceObject->Get('powerAsocket_id') != 0) && ($oDatacenterDeviceObject->Get('powerBsocket_id') != 0)) {
+                    // Check if we are not already connected
+                    if (($oDatacenterDeviceObject->Get('powerAsocket_id') != $this->GetKey()) && ($oDatacenterDeviceObject->Get('powerBsocket_id') != $this->GetKey())) {
+                        // Generate Error Message
+                        $this->AddCheckIssue(Dict::Format('Class:PowerSocket/Error:NoFreePowerSocketOnDatacenterDevice'));
+                    }
                 }
             }
         }
