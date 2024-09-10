@@ -79,6 +79,37 @@
                 </field>
             </fields>
             <methods>
+                <method id="DoCheckToWrite" _delta="define">
+                    <comment>/**
+* Check availability of PDU/PowerSocket on Target before creation
+*/</comment>
+                    <static>false</static>
+                    <access>public</access>
+                    <type>Overload-DBObject</type>
+                    <code>
+                        <![CDATA[function DoCheckToWrite()
+{
+    // Run standard iTop checks first
+    parent::DoCheckToWrite();
+    // Make sure there is a free socket on the target
+    if ($this->Get('datacenterdevice_id') != 0) {
+        $datacenterdevice_id = $this->Get('datacenterdevice_id');
+        $oObject = MetaModel::GetObject('DatacenterDevice', $datacenterdevice_id, false);
+        if (is_object($oObject)) {
+            // Check if PowerSockets are already connected
+            if (($oObject->Get('powerAsocket_id') != 0) && ($oObject->Get('powerBsocket_id') != 0)) {
+                // Check if we are not already connected
+                if (($oObject->Get('powerAsocket_id') != $this->GetKey()) && ($oObject->Get('powerBsocket_id') != $this->GetKey())) {
+                    // Generate Error Message
+                    $this->m_aCheckIssues[] = Dict::Format('Class:PowerSocket/Error:NoFreePowerSocketOnDatacenterDevice');
+                    return;
+                }
+            }
+        }
+    }
+}]]>
+                    </code>
+                </method>
                 <method id="ConnectPowerSocket" _delta="define">
                     <static>false</static>
                     <access>public</access>
@@ -88,7 +119,6 @@
 {
     if ($datacenterdevice_id != 0) {
         $oObject = MetaModel::GetObject('DatacenterDevice', $datacenterdevice_id, false);
-        // FYI: MetaModel::GetObject('DatacenterDevice', 0); generates a FatalError
         if (is_object($oObject)) {
         // find powerAsocket_id or powerBsocket_id to be empty
             if ($oObject->Get('powerAsocket_id') == 0) {
@@ -97,7 +127,7 @@
             } elseif ($oObject->Get('powerBsocket_id') == 0) {
                 $oObject->Set('powerBsocket_id', $this->GetKey());
                 $oObject->DBUpdate();
-            } else {
+            } elseif (($oObject->Get('powerAsocket_id') != $this->GetKey()) && ($oObject->Get('powerBsocket_id') != $this->GetKey())) {
                 // unable to connect to powerAsocket or powerBsocket - so remove connection again
                 $this->Set('datacenterdevice_id','');
 

@@ -3,7 +3,7 @@
 /**
  * @copyright   Copyright (C) 2024 Björn Rudner
  * @license     https://www.gnu.org/licenses/gpl-3.0.en.html
- * @version     2024-09-05
+ * @version     2024-09-10
  *
  * Localized data
  */
@@ -19,6 +19,7 @@ Dict::Add('DE DE', 'German', 'Deutsch', array(
     'Class:PowerSocket/Attribute:pdu_name' => 'PDU Name',
     'Class:PowerSocket/Attribute:datacenterdevice_id' => 'Datacenter-Gerät',
     'Class:PowerSocket/Attribute:datacenterdevice_name' => 'Datacenter-Gerät Name',
+    'Class:PowerSocket/Error:NoFreePowerSocketOnDatacenterDevice' => 'Kann keine Verbindung mit dem Datacenter-Gerät herstellen, kein freier Stromanschluss verfügbar.',
     // Class: PDU
     'Class:PDU/Attribute:powersocket_list' => 'Stromanschlüsse',
     'Class:PDU/Attribute:powersocket_list+' => '',
