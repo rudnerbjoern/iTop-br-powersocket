@@ -94,12 +94,12 @@
     // Make sure there is a free socket on the target
     if ($this->Get('datacenterdevice_id') != 0) {
         $datacenterdevice_id = $this->Get('datacenterdevice_id');
-        $oObject = MetaModel::GetObject('DatacenterDevice', $datacenterdevice_id, false);
-        if (is_object($oObject)) {
+        $oDatacenterDeviceObject = MetaModel::GetObject('DatacenterDevice', $datacenterdevice_id, false);
+        if (is_object($oDatacenterDeviceObject)) {
             // Check if PowerSockets are already connected
-            if (($oObject->Get('powerAsocket_id') != 0) && ($oObject->Get('powerBsocket_id') != 0)) {
+            if (($oDatacenterDeviceObject->Get('powerAsocket_id') != 0) && ($oDatacenterDeviceObject->Get('powerBsocket_id') != 0)) {
                 // Check if we are not already connected
-                if (($oObject->Get('powerAsocket_id') != $this->GetKey()) && ($oObject->Get('powerBsocket_id') != $this->GetKey())) {
+                if (($oDatacenterDeviceObject->Get('powerAsocket_id') != $this->GetKey()) && ($oDatacenterDeviceObject->Get('powerBsocket_id') != $this->GetKey())) {
                     // Generate Error Message
                     $this->m_aCheckIssues[] = Dict::Format('Class:PowerSocket/Error:NoFreePowerSocketOnDatacenterDevice');
                     return;
@@ -118,16 +118,22 @@
                         <![CDATA[public function ConnectPowerSocket($datacenterdevice_id)
 {
     if ($datacenterdevice_id != 0) {
-        $oObject = MetaModel::GetObject('DatacenterDevice', $datacenterdevice_id, false);
-        if (is_object($oObject)) {
+        $oDatacenterDeviceObject = MetaModel::GetObject('DatacenterDevice', $datacenterdevice_id, false);
+        if (is_object($oDatacenterDeviceObject)) {
         // find powerAsocket_id or powerBsocket_id to be empty
-            if ($oObject->Get('powerAsocket_id') == 0) {
-                $oObject->Set('powerAsocket_id', $this->GetKey());
-                $oObject->DBUpdate();
-            } elseif ($oObject->Get('powerBsocket_id') == 0) {
-                $oObject->Set('powerBsocket_id', $this->GetKey());
-                $oObject->DBUpdate();
-            } elseif (($oObject->Get('powerAsocket_id') != $this->GetKey()) && ($oObject->Get('powerBsocket_id') != $this->GetKey())) {
+            if ($oDatacenterDeviceObject->Get('powerAsocket_id') == 0) {
+                //set powersource form pdu_id
+                $oDatacenterDeviceObject->Set('powerA_id', $this->Get('pdu_id'));
+                // set powersocket from id
+                $oDatacenterDeviceObject->Set('powerAsocket_id', $this->GetKey());
+                $oDatacenterDeviceObject->DBUpdate();
+            } elseif ($oDatacenterDeviceObject->Get('powerBsocket_id') == 0) {
+                //set powersource form pdu_id
+                $oDatacenterDeviceObject->Set('powerB_id', $this->Get('pdu_id'));
+                // set powersocket from id
+                $oDatacenterDeviceObject->Set('powerBsocket_id', $this->GetKey());
+                $oDatacenterDeviceObject->DBUpdate();
+            } elseif (($oDatacenterDeviceObject->Get('powerAsocket_id') != $this->GetKey()) && ($oDatacenterDeviceObject->Get('powerBsocket_id') != $this->GetKey())) {
                 // unable to connect to powerAsocket or powerBsocket - so remove connection again
                 $this->Set('datacenterdevice_id','');
 
@@ -146,16 +152,17 @@
                         <![CDATA[public function DisconnectPowerSocket($datacenterdevice_id)
 {
     if ($datacenterdevice_id != 0) {
-        $oObject = MetaModel::GetObject('DatacenterDevice', $datacenterdevice_id, false);
-        // FYI: MetaModel::GetObject('DatacenterDevice', 0); generates a FatalError
-        if (is_object($oObject)) {
+        $oDatacenterDeviceObject = MetaModel::GetObject('DatacenterDevice', $datacenterdevice_id, false);
+        if (is_object($oDatacenterDeviceObject)) {
             // find powerAsocket_id or powerBsocket_id
-            if ($oObject->Get('powerAsocket_id') == $this->GetKey()) {
-                $oObject->Set('powerAsocket_id', '');
-                $oObject->DBUpdate();
-            } elseif ($oObject->Get('powerBsocket_id') == $this->GetKey()) {
-                $oObject->Set('powerBsocket_id', '');
-                $oObject->DBUpdate();
+            if ($oDatacenterDeviceObject->Get('powerAsocket_id') == $this->GetKey()) {
+                $oDatacenterDeviceObject->Set('powerA_id', '');
+                $oDatacenterDeviceObject->Set('powerAsocket_id', '');
+                $oDatacenterDeviceObject->DBUpdate();
+            } elseif ($oDatacenterDeviceObject->Get('powerBsocket_id') == $this->GetKey()) {
+                $oDatacenterDeviceObject->Set('powerB_id', '');
+                $oDatacenterDeviceObject->Set('powerBsocket_id', '');
+                $oDatacenterDeviceObject->DBUpdate();
             }
         }
     }
@@ -365,11 +372,11 @@
                         <![CDATA[public function ConnectPowerSocket($powerSocketId)
 {
     if ($powerSocketId != 0) {
-        $oObject = MetaModel::GetObject('PowerSocket', $powerSocketId, false);
+        $oPowerSocketObject = MetaModel::GetObject('PowerSocket', $powerSocketId, false);
         // FYI: MetaModel::GetObject('PowerSocket', 0); generates a FatalError
-        if (is_object($oObject)) {
-            $oObject->Set('datacenterdevice_id', $this->GetKey());
-            $oObject->DBUpdate();
+        if (is_object($oPowerSocketObject)) {
+            $oPowerSocketObject->Set('datacenterdevice_id', $this->GetKey());
+            $oPowerSocketObject->DBUpdate();
         }
     }
 }]]>
@@ -383,11 +390,11 @@
                         <![CDATA[public function DisconnectPowerSocket($powerSocketId)
 {
     if ($powerSocketId != 0) {
-        $oObject = MetaModel::GetObject('PowerSocket', $powerSocketId, false);
+        $oPowerSocketObject = MetaModel::GetObject('PowerSocket', $powerSocketId, false);
         // FYI: MetaModel::GetObject('PowerSocket', 0); generates a FatalError
-        if (is_object($oObject)) {
-            $oObject->Set('datacenterdevice_id', '');
-            $oObject->DBUpdate();
+        if (is_object($oPowerSocketObject)) {
+            $oPowerSocketObject->Set('datacenterdevice_id', '');
+            $oPowerSocketObject->DBUpdate();
         }
     }
 }]]>
