@@ -18,6 +18,7 @@ Dict::Add('EN US', 'English', 'English', array(
     'Class:PowerSocket/Attribute:pdu_name' => 'PDU name',
     'Class:PowerSocket/Attribute:datacenterdevice_id' => 'Datacenter device',
     'Class:PowerSocket/Attribute:datacenterdevice_name' => 'Datacenter device name',
+    'Class:PowerSocket/Error:NoFreePowerSocketOnDatacenterDevice' => 'Could not assign power socket to datacenter device, no free socket available.',
     // Class: PDU
     'Class:PDU/Attribute:powersocket_list' => 'Power Sockets',
     'Class:PDU/Attribute:powersocket_list+' => '',

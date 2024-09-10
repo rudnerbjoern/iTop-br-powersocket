@@ -11,7 +11,9 @@ Work in progress - expect many errors
 
 ## iTop Compatibility
 
-The branch <https://github.com/rudnerbjoern/iTop-br-powersocket/tree/itop/2.7.10> is compatible to iTop 2.7 and iTop 3.1.
+The branch [2.7.10](https://github.com/rudnerbjoern/iTop-br-powersocket/tree/itop/2.7.10) is compatible to iTop 2.7 and iTop 3.1.
+
+The branch [3.2](https://github.com/rudnerbjoern/iTop-br-powersocket/tree/itop/3.2) will only be compatible to iTop 3.1.
 
 Versions starting with 2.7.x are kept compatible to iTop 2.7
 
