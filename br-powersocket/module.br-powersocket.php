@@ -20,7 +20,7 @@ SetupWebPage::AddModule(
         // Setup
         //
         'dependencies' => array(
-            'itop-structure/3.1.0',
+            'itop-config-mgmt/3.1.0',
             'itop-datacenter-mgmt/3.1.0',
             'itop-virtualization-mgmt/3.1.0',
             'itop-storage-mgmt/3.1.0',
