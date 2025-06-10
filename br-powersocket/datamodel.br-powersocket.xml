@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<itop_design xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="3.1">
+<?xml-model href="https://raw.githubusercontent.com/rudnerbjoern/iTop-schema/refs/heads/main/datamodel.v3.2.xsd"?>
+<itop_design xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="3.2">
     <classes>
         <class id="PowerSocket" _delta="define">
             <parent>cmdbAbstractObject</parent>
@@ -22,7 +23,6 @@
                 <style>
                     <icon>images/powersocket.svg</icon>
                 </style>
-                <icon>images/powersocket.png</icon>
                 <reconciliation>
                     <attributes>
                         <attribute id="name" />
@@ -311,7 +311,7 @@
                         </item>
                     </items>
                 </search>
-                <default_search >
+                <default_search>
                     <items>
                         <item id="friendlyname">
                             <rank>10</rank>
@@ -338,7 +338,6 @@
                     <tracking_level>all</tracking_level>
                     <count_min>0</count_min>
                     <count_max>0</count_max>
-                    <duplicates>false</duplicates>
                 </field>
             </fields>
             <presentation>
