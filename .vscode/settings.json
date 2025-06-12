@@ -13,6 +13,7 @@
         "criticity",
         "dashlet",
         "dashlets",
+        "datacenter",
         "datacenterdevice",
         "extkey",
         "fieldset",
@@ -21,9 +22,12 @@
         "functionalcis",
         "intval",
         "isset",
+        "mgmt",
         "neighbour",
         "neighbours",
         "powersocket",
-        "powersource"
+        "powersource",
+        "Shlain",
+        "teemip"
     ]
 }
