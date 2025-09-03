@@ -112,7 +112,6 @@
                     <rank>10</rank>
                     <callback>EvtAboutToDelete</callback>
                 </event_listener>
-
             </event_listeners>
             <methods>
                 <method id="EvtCheckToWrite">
@@ -395,113 +394,127 @@
                     <target_attcode>name</target_attcode>
                 </field>
             </fields>
+            <event_listeners>
+                <event_listener id="EvtBeforeWrite">
+                    <event>EVENT_DB_BEFORE_WRITE</event>
+                    <rank>10</rank>
+                    <callback>EvtBeforeWrite</callback>
+                </event_listener>
+                <event_listener id="EvtAfterWrite">
+                    <event>EVENT_DB_AFTER_WRITE</event>
+                    <rank>10</rank>
+                    <callback>EvtAfterWrite</callback>
+                </event_listener>
+                <event_listener id="EvtAboutToDelete">
+                    <event>EVENT_DB_ABOUT_TO_DELETE</event>
+                    <rank>10</rank>
+                    <callback>EvtAboutToDelete</callback>
+                </event_listener>
+            </event_listeners>
             <methods>
+                <method id="EvtBeforeWrite">
+                    <static>false</static>
+                    <access>public</access>
+                    <type>EventListener</type>
+                    <code><![CDATA[
+    public function EvtBeforeWrite(Combodo\iTop\Service\Events\EventData $oEventData)
+    {
+        if ($oEventData->Get('is_new') === true ) {
+            // OnInsert
+        }
+        else {
+            // OnUpdate
+            $aChanges = $this->ListChanges();
+            if (array_key_exists('powerAsocket_id', $aChanges)) {
+                // record in the Location memory object that the PowerSocketA was changed
+                $this->iPowerSocketAChanged = true;
+                // disconnect the old PowerSocketA
+                $this->DisconnectPowerSocket($this->GetOriginal('powerAsocket_id'));
+            }
+            if (array_key_exists('powerBsocket_id', $aChanges)) {
+                // record in the Location memory object that the PowerSocketB was changed
+                $this->iPowerSocketBChanged = true;
+                // disconnect the old PowerSocketB
+                $this->DisconnectPowerSocket($this->GetOriginal('powerBsocket_id'));
+            }
+        }
+    }
+  ]]></code>
+                </method>
+                <method id="EvtAfterWrite">
+                    <static>false</static>
+                    <access>public</access>
+                    <type>EventListener</type>
+                    <code><![CDATA[
+    public function EvtAfterWrite(Combodo\iTop\Service\Events\EventData $oEventData)
+    {
+        if ($oEventData->Get('is_new') === true) {
+            // AfterInsert
+            if ($this->Get('powerAsocket_id') != 0)
+                $this->ConnectPowerSocket($this->Get('powerAsocket_id'));
+            if ($this->Get('powerBsocket_id') != 0)
+                $this->ConnectPowerSocket($this->Get('powerBsocket_id'));
+        } else {
+            // AfterUpdate
+            // The DC device is updated in DB and PowerSocket was changed
+            if (isset($this->iPowerSocketAChanged))
+                $this->ConnectPowerSocket($this->Get('powerAsocket_id'));
+            if (isset($this->iPowerSocketBChanged))
+                $this->ConnectPowerSocket($this->Get('powerBsocket_id'));
+        }
+    }
+  ]]></code>
+                </method>
+                <method id="EvtAboutToDelete">
+                    <static>false</static>
+                    <access>public</access>
+                    <type>EventListener</type>
+                    <code><![CDATA[
+    public function EvtAboutToDelete(Combodo\iTop\Service\Events\EventData $oEventData)
+    {
+        $aChanges = $this->ListChanges();
+        if (array_key_exists('powerAsocket_id', $aChanges))
+            $this->DisconnectPowerSocket($this->Get('powerAsocket_id'));
+        if (array_key_exists('powerBsocket_id', $aChanges))
+            $this->DisconnectPowerSocket($this->Get('powerBsocket_id'));
+    }
+  ]]></code>
+                </method>
                 <method id="ConnectPowerSocket" _delta="define">
                     <static>false</static>
                     <access>public</access>
                     <type>Overload-cmdbAbstractObject</type>
-                    <code>
-                        <![CDATA[public function ConnectPowerSocket($powerSocketId)
-{
-    if ($powerSocketId != 0) {
-        $oPowerSocketObject = MetaModel::GetObject('PowerSocket', $powerSocketId, false);
-        // FYI: MetaModel::GetObject('PowerSocket', 0); generates a FatalError
-        if (is_object($oPowerSocketObject)) {
-            $oPowerSocketObject->Set('datacenterdevice_id', $this->GetKey());
-            $oPowerSocketObject->DBUpdate();
+                    <code><![CDATA[
+    public function ConnectPowerSocket($powerSocketId)
+    {
+        if ($powerSocketId != 0) {
+            $oPowerSocketObject = MetaModel::GetObject('PowerSocket', $powerSocketId, false);
+            // FYI: MetaModel::GetObject('PowerSocket', 0); generates a FatalError
+            if (is_object($oPowerSocketObject)) {
+                $oPowerSocketObject->Set('datacenterdevice_id', $this->GetKey());
+                $oPowerSocketObject->DBUpdate();
+            }
         }
     }
-}]]>
-                    </code>
+  ]]></code>
                 </method>
                 <method id="DisconnectPowerSocket" _delta="define">
                     <static>false</static>
                     <access>public</access>
                     <type>Overload-cmdbAbstractObject</type>
-                    <code>
-                        <![CDATA[public function DisconnectPowerSocket($powerSocketId)
-{
-    if ($powerSocketId != 0) {
-        $oPowerSocketObject = MetaModel::GetObject('PowerSocket', $powerSocketId, false);
-        // FYI: MetaModel::GetObject('PowerSocket', 0); generates a FatalError
-        if (is_object($oPowerSocketObject)) {
-            $oPowerSocketObject->Set('datacenterdevice_id', '');
-            $oPowerSocketObject->DBUpdate();
+                    <code><![CDATA[
+    public function DisconnectPowerSocket($powerSocketId)
+    {
+        if ($powerSocketId != 0) {
+            $oPowerSocketObject = MetaModel::GetObject('PowerSocket', $powerSocketId, false);
+            // FYI: MetaModel::GetObject('PowerSocket', 0); generates a FatalError
+            if (is_object($oPowerSocketObject)) {
+                $oPowerSocketObject->Set('datacenterdevice_id', '');
+                $oPowerSocketObject->DBUpdate();
+            }
         }
     }
-}]]>
-                    </code>
-                </method>
-                <method id="AfterInsert" _delta="define">
-                    <static>false</static>
-                    <access>public</access>
-                    <type>Overload-DBObject</type>
-                    <code>
-                        <![CDATA[public function AfterInsert()
-{
-    if ($this->Get('powerAsocket_id') != 0)
-        $this->ConnectPowerSocket($this->Get('powerAsocket_id'));
-    if ($this->Get('powerBsocket_id') != 0)
-        $this->ConnectPowerSocket($this->Get('powerBsocket_id'));
-    parent::AfterInsert();
-}]]>
-                    </code>
-                </method>
-                <method id="OnUpdate" _delta="define">
-                    <static>false</static>
-                    <access>public</access>
-                    <type>Overload-DBObject</type>
-                    <code>
-                        <![CDATA[public function OnUpdate()
-{
-    $aChanges = $this->ListChanges();
-    if (array_key_exists('powerAsocket_id', $aChanges)) {
-        // record in the Location memory object that the PowerSocketA was changed
-        $this->iPowerSocketAChanged = true;
-        // disconnect the old PowerSocketA
-        $this->DisconnectPowerSocket($this->GetOriginal('powerAsocket_id'));
-    }
-    if (array_key_exists('powerBsocket_id', $aChanges)) {
-        // record in the Location memory object that the PowerSocketB was changed
-        $this->iPowerSocketBChanged = true;
-        // disconnect the old PowerSocketB
-        $this->DisconnectPowerSocket($this->GetOriginal('powerBsocket_id'));
-    }
-    parent::OnUpdate();
-}]]>
-                    </code>
-                </method>
-                <method id="AfterUpdate" _delta="define">
-                    <static>false</static>
-                    <access>public</access>
-                    <type>Overload-DBObject</type>
-                    <code>
-                        <![CDATA[public function AfterUpdate()
-{
-    // The DC device is updated in DB and PowerSocket was changed
-    if (isset($this->iPowerSocketAChanged))
-        $this->ConnectPowerSocket($this->Get('powerAsocket_id'));
-    if (isset($this->iPowerSocketBChanged))
-        $this->ConnectPowerSocket($this->Get('powerBsocket_id'));
-    parent::AfterUpdate();
-}]]>
-                    </code>
-                </method>
-                <method id="OnDelete" _delta="define">
-                    <static>false</static>
-                    <access>public</access>
-                    <type>Overload-DBObject</type>
-                    <code>
-                        <![CDATA[public function OnDelete()
-{
-    $aChanges = $this->ListChanges();
-    if (array_key_exists('powerAsocket_id', $aChanges))
-        $this->DisconnectPowerSocket($this->Get('powerAsocket_id'));
-    if (array_key_exists('powerBsocket_id', $aChanges))
-        $this->DisconnectPowerSocket($this->Get('powerBsocket_id'));
-    parent::OnDelete();
-}]]>
-                    </code>
+  ]]></code>
                 </method>
             </methods>
             <presentation>
