@@ -29,5 +29,8 @@
         "powersource",
         "Shlain",
         "teemip"
-    ]
+    ],
+    "editor.formatOnSave": true,
+    "editor.formatOnSaveMode": "modificationsIfAvailable",
+    "editor.formatOnPaste": true
 }
