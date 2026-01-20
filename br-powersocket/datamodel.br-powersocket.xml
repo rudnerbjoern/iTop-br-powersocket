@@ -92,34 +92,34 @@
                 </field>
             </fields>
             <event_listeners>
-                <event_listener id="EvtCheckPowerSocketToWrite">
+                <event_listener id="OnPowerSocketCheckToWrite">
                     <event>EVENT_DB_CHECK_TO_WRITE</event>
                     <rank>10</rank>
-                    <callback>EvtCheckPowerSocketToWrite</callback>
+                    <callback>OnPowerSocketCheckToWrite</callback>
                 </event_listener>
-                <event_listener id="EvtBeforePowerSocketWrite">
+                <event_listener id="OnPowerSocketBeforeWrite">
                     <event>EVENT_DB_BEFORE_WRITE</event>
                     <rank>10</rank>
-                    <callback>EvtBeforePowerSocketWrite</callback>
+                    <callback>OnPowerSocketBeforeWrite</callback>
                 </event_listener>
-                <event_listener id="EvtAfterPowerSocketWrite">
+                <event_listener id="OnPowerSocketAfterWrite">
                     <event>EVENT_DB_AFTER_WRITE</event>
                     <rank>10</rank>
-                    <callback>EvtAfterPowerSocketWrite</callback>
+                    <callback>OnPowerSocketAfterWrite</callback>
                 </event_listener>
-                <event_listener id="EvtAboutToDeletePowerSocket">
+                <event_listener id="OnPowerSocketAboutToDelete">
                     <event>EVENT_DB_ABOUT_TO_DELETE</event>
                     <rank>10</rank>
-                    <callback>EvtAboutToDeletePowerSocket</callback>
+                    <callback>OnPowerSocketAboutToDelete</callback>
                 </event_listener>
             </event_listeners>
             <methods>
-                <method id="EvtCheckPowerSocketToWrite">
+                <method id="OnPowerSocketCheckToWrite">
                     <static>false</static>
                     <access>public</access>
                     <type>EventListener</type>
                     <code><![CDATA[
-    public function EvtCheckPowerSocketToWrite(Combodo\iTop\Service\Events\EventData $oEventData)
+    public function OnPowerSocketCheckToWrite(Combodo\iTop\Service\Events\EventData $oEventData)
     {
         // This method will block the PowerSocket modification, by adding a Check Issue
         $aChanges = $this->ListChanges();
@@ -145,12 +145,12 @@
     }
   ]]></code>
                 </method>
-                <method id="EvtBeforePowerSocketWrite">
+                <method id="OnPowerSocketBeforeWrite">
                     <static>false</static>
                     <access>public</access>
                     <type>EventListener</type>
                     <code><![CDATA[
-    public function EvtBeforePowerSocketWrite(Combodo\iTop\Service\Events\EventData $oEventData)
+    public function OnPowerSocketBeforeWrite(Combodo\iTop\Service\Events\EventData $oEventData)
     {
         if ($oEventData->Get('is_new') === true) {
             // OnInsert
@@ -168,12 +168,12 @@
     }
   ]]></code>
                 </method>
-                <method id="EvtAfterPowerSocketWrite">
+                <method id="OnPowerSocketAfterWrite">
                     <static>false</static>
                     <access>public</access>
                     <type>EventListener</type>
                     <code><![CDATA[
-    public function EvtAfterPowerSocketWrite(Combodo\iTop\Service\Events\EventData $oEventData)
+    public function OnPowerSocketAfterWrite(Combodo\iTop\Service\Events\EventData $oEventData)
     {
         if ($oEventData->Get('is_new') === true) {
             // AfterInsert
@@ -188,12 +188,12 @@
     }
   ]]></code>
                 </method>
-                <method id="EvtAboutToDeletePowerSocket">
+                <method id="OnPowerSocketAboutToDelete">
                     <static>false</static>
                     <access>public</access>
                     <type>EventListener</type>
                     <code><![CDATA[
-    public function EvtAboutToDeletePowerSocket(Combodo\iTop\Service\Events\EventData $oEventData)
+    public function OnPowerSocketAboutToDelete(Combodo\iTop\Service\Events\EventData $oEventData)
     {
         $aChanges = $this->ListChanges();
         if (array_key_exists('datacenterdevice_id', $aChanges))
@@ -395,29 +395,29 @@
                 </field>
             </fields>
             <event_listeners>
-                <event_listener id="EvtBeforePowerSocketWrite">
+                <event_listener id="OnDatacenterDeviceBeforeWritePowerSocket">
                     <event>EVENT_DB_BEFORE_WRITE</event>
                     <rank>10</rank>
-                    <callback>EvtBeforePowerSocketWrite</callback>
+                    <callback>OnDatacenterDeviceBeforeWritePowerSocket</callback>
                 </event_listener>
-                <event_listener id="EvtAfterPowerSocketWrite">
+                <event_listener id="OnDatacenterDeviceAfterWritePowerSocket">
                     <event>EVENT_DB_AFTER_WRITE</event>
                     <rank>10</rank>
-                    <callback>EvtAfterPowerSocketWrite</callback>
+                    <callback>OnDatacenterDeviceAfterWritePowerSocket</callback>
                 </event_listener>
-                <event_listener id="EvtAboutToDeletePowerSocket">
+                <event_listener id="OnDatacenterDeviceAboutToDeletePowerSocket">
                     <event>EVENT_DB_ABOUT_TO_DELETE</event>
                     <rank>10</rank>
-                    <callback>EvtAboutToDeletePowerSocket</callback>
+                    <callback>OnDatacenterDeviceAboutToDeletePowerSocket</callback>
                 </event_listener>
             </event_listeners>
             <methods>
-                <method id="EvtBeforePowerSocketWrite">
+                <method id="OnDatacenterDeviceBeforeWritePowerSocket">
                     <static>false</static>
                     <access>public</access>
                     <type>EventListener</type>
                     <code><![CDATA[
-    public function EvtBeforePowerSocketWrite(Combodo\iTop\Service\Events\EventData $oEventData)
+    public function OnDatacenterDeviceBeforeWritePowerSocket(Combodo\iTop\Service\Events\EventData $oEventData)
     {
         if ($oEventData->Get('is_new') === true ) {
             // OnInsert
@@ -441,12 +441,12 @@
     }
   ]]></code>
                 </method>
-                <method id="EvtAfterPowerSocketWrite">
+                <method id="OnDatacenterDeviceAfterWritePowerSocket">
                     <static>false</static>
                     <access>public</access>
                     <type>EventListener</type>
                     <code><![CDATA[
-    public function EvtAfterPowerSocketWrite(Combodo\iTop\Service\Events\EventData $oEventData)
+    public function OnDatacenterDeviceAfterWritePowerSocket(Combodo\iTop\Service\Events\EventData $oEventData)
     {
         if ($oEventData->Get('is_new') === true) {
             // AfterInsert
@@ -465,12 +465,12 @@
     }
   ]]></code>
                 </method>
-                <method id="EvtAboutToDeletePowerSocket">
+                <method id="OnDatacenterDeviceAboutToDeletePowerSocket">
                     <static>false</static>
                     <access>public</access>
                     <type>EventListener</type>
                     <code><![CDATA[
-    public function EvtAboutToDeletePowerSocket(Combodo\iTop\Service\Events\EventData $oEventData)
+    public function OnDatacenterDeviceAboutToDeletePowerSocket(Combodo\iTop\Service\Events\EventData $oEventData)
     {
         $aChanges = $this->ListChanges();
         if (array_key_exists('powerAsocket_id', $aChanges))
