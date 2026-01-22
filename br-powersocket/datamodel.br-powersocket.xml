@@ -1,8 +1,108 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <itop_design version="3.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://rudnerbjoern.github.io/iTop-schema/3.2/itop_design.xsd">
     <classes>
+        <class id="PowerSocketType" _delta="define">
+            <parent>Typology</parent>
+            <properties>
+                <category>bizmodel,searchable</category>
+                <abstract>false</abstract>
+                <key_type>autoincrement</key_type>
+                <db_table>powersockettype</db_table>
+                <db_key_field>id</db_key_field>
+                <db_final_class_field />
+                <naming>
+                    <attributes>
+                        <attribute id="name" />
+                    </attributes>
+                </naming>
+                <fields_semantic>
+                    <image_attribute>picture</image_attribute>
+                </fields_semantic>
+                <style>
+                    <icon />
+                </style>
+                <reconciliation>
+                    <attributes>
+                        <attribute id="name" />
+                    </attributes>
+                </reconciliation>
+                <uniqueness_rules>
+                    <rule id="name">
+                        <attributes>
+                            <attribute id="name" />
+                        </attributes>
+                        <is_blocking>true</is_blocking>
+                    </rule>
+                </uniqueness_rules>
+            </properties>
+            <fields>
+                <field id="description" xsi:type="AttributeText">
+                    <sql>description</sql>
+                    <is_null_allowed>true</is_null_allowed>
+                </field>
+                <field id="picture" xsi:type="AttributeImage">
+                    <sql>picture</sql>
+                    <display_max_width>256</display_max_width>
+                    <display_max_height>256</display_max_height>
+                    <storage_max_width>512</storage_max_width>
+                    <storage_max_height>512</storage_max_height>
+                    <is_null_allowed>true</is_null_allowed>
+                </field>
+            </fields>
+            <methods />
+            <presentation>
+                <details>
+                    <items>
+                        <item id="name">
+                            <rank>10</rank>
+                        </item>
+                        <item id="description">
+                            <rank>20</rank>
+                        </item>
+                        <item id="picture">
+                            <rank>30</rank>
+                        </item>
+                    </items>
+                </details>
+                <list>
+                    <items>
+                        <item id="name">
+                            <rank>20</rank>
+                        </item>
+                        <item id="description">
+                            <rank>30</rank>
+                        </item>
+                    </items>
+                </list>
+                <default_search>
+                    <items>
+                        <item id="name">
+                            <rank>10</rank>
+                        </item>
+                    </items>
+                </default_search>
+                <search>
+                    <items>
+                        <item id="name">
+                            <rank>10</rank>
+                        </item>
+                    </items>
+                </search>
+                <summary>
+                    <items>
+                        <item id="picture">
+                            <rank>10</rank>
+                        </item>
+                    </items>
+                </summary>
+            </presentation>
+        </class>
         <class id="PowerSocket" _delta="define">
             <parent>cmdbAbstractObject</parent>
+            <php_parent>
+                <name>BR\Extension\PowerSocket\Model\_PowerSocket</name>
+                <file>src/Model/_PowerSocket.php</file>
+            </php_parent>
             <properties>
                 <category>bizmodel,searchable</category>
                 <abstract>false</abstract>
@@ -31,7 +131,6 @@
                 </reconciliation>
                 <obsolescence>
                     <condition>pdu_id_obsolescence_flag</condition>
-                    <!-- <condition><![CDATA[status = 'obsolete']]></condition> -->
                 </obsolescence>
             </properties>
             <fields>
@@ -55,14 +154,45 @@
                     <extkey_attcode>pdu_id</extkey_attcode>
                     <target_attcode>name</target_attcode>
                 </field>
+                <field id="phase" xsi:type="AttributeEnum">
+                    <sql>phase</sql>
+                    <is_null_allowed>true</is_null_allowed>
+                    <display_style>radio_horizontal</display_style>
+                    <sort_type>rank</sort_type>
+                    <values>
+                        <value id="L1">
+                            <code>L1</code>
+                            <rank>10</rank>
+                        </value>
+                        <value id="L2">
+                            <code>L2</code>
+                            <rank>20</rank>
+                        </value>
+                        <value id="L3">
+                            <code>L3</code>
+                            <rank>30</rank>
+                        </value>
+                    </values>
+                </field>
+                <field id="socket_type_id" xsi:type="AttributeExternalKey">
+                    <sql>socket_type_id</sql>
+                    <target_class>PowerSocketType</target_class>
+                    <is_null_allowed>true</is_null_allowed>
+                    <on_target_delete>DEL_MANUAL</on_target_delete>
+                    <allow_target_creation>false</allow_target_creation>
+                </field>
+                <field id="socket_type_name" xsi:type="AttributeExternalField">
+                    <extkey_attcode>socket_type_id</extkey_attcode>
+                    <target_attcode>name</target_attcode>
+                </field>
                 <field id="status" xsi:type="AttributeEnum">
                     <sql>status</sql>
                     <is_null_allowed>true</is_null_allowed>
                     <display_style>radio_horizontal</display_style>
                     <sort_type>rank</sort_type>
                     <values>
-                        <value id="stock">
-                            <code>stock</code>
+                        <value id="available">
+                            <code>available</code>
                             <rank>10</rank>
                         </value>
                         <value id="inactive">
@@ -74,7 +204,7 @@
                             <rank>30</rank>
                         </value>
                         <value id="obsolete">
-                            <code>active</code>
+                            <code>obsolete</code>
                             <rank>40</rank>
                         </value>
                     </values>
@@ -113,154 +243,7 @@
                     <callback>OnPowerSocketAboutToDelete</callback>
                 </event_listener>
             </event_listeners>
-            <methods>
-                <method id="OnPowerSocketCheckToWrite">
-                    <static>false</static>
-                    <access>public</access>
-                    <type>EventListener</type>
-                    <code><![CDATA[
-    public function OnPowerSocketCheckToWrite(Combodo\iTop\Service\Events\EventData $oEventData)
-    {
-        // This method will block the PowerSocket modification, by adding a Check Issue
-        $aChanges = $this->ListChanges();
-
-        // Current User may not be allowed to see User class, so we can't use
-        if (array_key_exists('datacenterdevice_id', $aChanges)) {
-            // Make sure there is a free socket on the target
-            if ($this->Get('datacenterdevice_id') != 0) {
-                $datacenterdevice_id = $this->Get('datacenterdevice_id');
-                $oDatacenterDeviceObject = MetaModel::GetObject('DatacenterDevice', $datacenterdevice_id, false);
-                if (is_object($oDatacenterDeviceObject)) {
-                    // Check if PowerSockets are already connected
-                    if (($oDatacenterDeviceObject->Get('powerAsocket_id') != 0) && ($oDatacenterDeviceObject->Get('powerBsocket_id') != 0)) {
-                        // Check if we are not already connected
-                        if (($oDatacenterDeviceObject->Get('powerAsocket_id') != $this->GetKey()) && ($oDatacenterDeviceObject->Get('powerBsocket_id') != $this->GetKey())) {
-                            // Generate Error Message
-                            $this->AddCheckIssue(Dict::Format('Class:PowerSocket/Error:NoFreePowerSocketOnDatacenterDevice'));
-                        }
-                    }
-                }
-            }
-        }
-    }
-  ]]></code>
-                </method>
-                <method id="OnPowerSocketBeforeWrite">
-                    <static>false</static>
-                    <access>public</access>
-                    <type>EventListener</type>
-                    <code><![CDATA[
-    public function OnPowerSocketBeforeWrite(Combodo\iTop\Service\Events\EventData $oEventData)
-    {
-        if ($oEventData->Get('is_new') === true) {
-            // OnInsert
-        }
-        else {
-            // OnUpdate
-            $aChanges = $this->ListChanges();
-            if (array_key_exists('datacenterdevice_id', $aChanges)) {
-                // record in the memory object that the DatacenterDevice was changed
-                $this->iDatacenterDeviceChanged = true;
-                // disconnect the old DatacenterDevice
-                $this->DisconnectPowerSocket($this->GetOriginal('datacenterdevice_id'));
-            }
-        }
-    }
-  ]]></code>
-                </method>
-                <method id="OnPowerSocketAfterWrite">
-                    <static>false</static>
-                    <access>public</access>
-                    <type>EventListener</type>
-                    <code><![CDATA[
-    public function OnPowerSocketAfterWrite(Combodo\iTop\Service\Events\EventData $oEventData)
-    {
-        if ($oEventData->Get('is_new') === true) {
-            // AfterInsert
-            if ($this->Get('datacenterdevice_id') != 0)
-                $this->ConnectPowerSocket($this->Get('datacenterdevice_id'));
-        } else {
-            // AfterUpdate
-            // The PowerSocket is updated in DB and DatacenterDevice was changed
-            if (isset($this->iDatacenterDeviceChanged))
-                $this->ConnectPowerSocket($this->Get('datacenterdevice_id'));
-        }
-    }
-  ]]></code>
-                </method>
-                <method id="OnPowerSocketAboutToDelete">
-                    <static>false</static>
-                    <access>public</access>
-                    <type>EventListener</type>
-                    <code><![CDATA[
-    public function OnPowerSocketAboutToDelete(Combodo\iTop\Service\Events\EventData $oEventData)
-    {
-        $aChanges = $this->ListChanges();
-        if (array_key_exists('datacenterdevice_id', $aChanges))
-            $this->DisconnectPowerSocket($this->Get('datacenterdevice_id'));
-    }
-  ]]></code>
-                </method>
-                <method id="ConnectPowerSocket">
-                    <static>false</static>
-                    <access>public</access>
-                    <type>Overload-cmdbAbstractObject</type>
-                    <code><![CDATA[
-    public function ConnectPowerSocket($datacenterdevice_id)
-    {
-        if ($datacenterdevice_id != 0) {
-            $oDatacenterDeviceObject = MetaModel::GetObject('DatacenterDevice', $datacenterdevice_id, false);
-            if (is_object($oDatacenterDeviceObject)) {
-            // find powerAsocket_id or powerBsocket_id to be empty
-                if ($oDatacenterDeviceObject->Get('powerAsocket_id') == 0) {
-                    //set powersource form pdu_id
-                    $oDatacenterDeviceObject->Set('powerA_id', $this->Get('pdu_id'));
-                    // set powersocket from id
-                    $oDatacenterDeviceObject->Set('powerAsocket_id', $this->GetKey());
-                    $oDatacenterDeviceObject->DBUpdate();
-                } elseif ($oDatacenterDeviceObject->Get('powerBsocket_id') == 0) {
-                    //set powersource form pdu_id
-                    $oDatacenterDeviceObject->Set('powerB_id', $this->Get('pdu_id'));
-                    // set powersocket from id
-                    $oDatacenterDeviceObject->Set('powerBsocket_id', $this->GetKey());
-                    $oDatacenterDeviceObject->DBUpdate();
-                } elseif (($oDatacenterDeviceObject->Get('powerAsocket_id') != $this->GetKey()) && ($oDatacenterDeviceObject->Get('powerBsocket_id') != $this->GetKey())) {
-                    // unable to connect to powerAsocket or powerBsocket - so remove connection again
-                    $this->Set('datacenterdevice_id','');
-
-                    $this->SetSessionMessageFromInstance('powersocket-1', 'Could not assign PowerSocket to DatacenterDevice, no free socket available', 'error', 1);
-                }
-            }
-        }
-    }
-  ]]></code>
-                </method>
-                <method id="DisconnectPowerSocket">
-                    <static>false</static>
-                    <access>public</access>
-                    <type>Overload-cmdbAbstractObject</type>
-                    <code><![CDATA[
-    public function DisconnectPowerSocket($datacenterdevice_id)
-    {
-        if ($datacenterdevice_id != 0) {
-            $oDatacenterDeviceObject = MetaModel::GetObject('DatacenterDevice', $datacenterdevice_id, false);
-            if (is_object($oDatacenterDeviceObject)) {
-                // find powerAsocket_id or powerBsocket_id
-                if ($oDatacenterDeviceObject->Get('powerAsocket_id') == $this->GetKey()) {
-                    $oDatacenterDeviceObject->Set('powerA_id', '');
-                    $oDatacenterDeviceObject->Set('powerAsocket_id', '');
-                    $oDatacenterDeviceObject->DBUpdate();
-                } elseif ($oDatacenterDeviceObject->Get('powerBsocket_id') == $this->GetKey()) {
-                    $oDatacenterDeviceObject->Set('powerB_id', '');
-                    $oDatacenterDeviceObject->Set('powerBsocket_id', '');
-                    $oDatacenterDeviceObject->DBUpdate();
-                }
-            }
-        }
-    }
-  ]]></code>
-                </method>
-            </methods>
+            <methods />
             <relations>
                 <relation id="impacts">
                     <neighbours>
@@ -282,27 +265,39 @@
                         <item id="pdu_id">
                             <rank>30</rank>
                         </item>
+                        <item id="phase" _delta="define">
+                            <rank>50</rank>
+                        </item>
+                        <item id="socket_type_id">
+                            <rank>60</rank>
+                        </item>
                         <item id="datacenterdevice_id">
-                            <rank>40</rank>
+                            <rank>70</rank>
                         </item>
                         <item id="comment">
-                            <rank>50</rank>
+                            <rank>80</rank>
                         </item>
                     </items>
                 </details>
                 <list>
                     <items>
                         <item id="name">
-                            <rank>10</rank>
-                        </item>
-                        <item id="status">
                             <rank>20</rank>
                         </item>
+                        <item id="status">
+                            <rank>30</rank>
+                        </item>
+                        <item id="socket_type_id">
+                            <rank>40</rank>
+                        </item>
+                        <item id="phase" _delta="define">
+                            <rank>60</rank>
+                        </item>
                         <item id="datacenterdevice_id">
-                            <rank>43</rank>
+                            <rank>70</rank>
                         </item>
                         <item id="comment">
-                            <rank>40</rank>
+                            <rank>80</rank>
                         </item>
                     </items>
                 </list>
@@ -314,11 +309,17 @@
                         <item id="status">
                             <rank>20</rank>
                         </item>
+                        <item id="socket_type_id">
+                            <rank>30</rank>
+                        </item>
+                        <item id="phase" _delta="define">
+                            <rank>50</rank>
+                        </item>
                         <item id="pdu_id">
-                            <rank>40</rank>
+                            <rank>60</rank>
                         </item>
                         <item id="datacenterdevice_id">
-                            <rank>50</rank>
+                            <rank>70</rank>
                         </item>
                     </items>
                 </search>
@@ -330,6 +331,9 @@
                         <item id="status">
                             <rank>20</rank>
                         </item>
+                        <item id="socket_type_id">
+                            <rank>30</rank>
+                        </item>
                         <item id="pdu_id">
                             <rank>40</rank>
                         </item>
@@ -338,6 +342,13 @@
                         </item>
                     </items>
                 </default_search>
+                <summary>
+                    <items>
+                        <item id="socket_type_id">
+                            <rank>10</rank>
+                        </item>
+                    </items>
+                </summary>
             </presentation>
         </class>
         <class id="PDU" _delta="must_exist">
@@ -363,10 +374,27 @@
         </class>
         <class id="DatacenterDevice" _delta="must_exist">
             <fields>
+                <field id="required_socket_type_id" xsi:type="AttributeExternalKey" _delta="define">
+                    <sql>required_socket_type_id</sql>
+                    <target_class>PowerSocketType</target_class>
+                    <is_null_allowed>true</is_null_allowed>
+                    <on_target_delete>DEL_MANUAL</on_target_delete>
+                    <allow_target_creation>false</allow_target_creation>
+                </field>
+                <field id="required_socket_type_name" xsi:type="AttributeExternalField" _delta="define">
+                    <extkey_attcode>required_socket_type_id</extkey_attcode>
+                    <target_attcode>name</target_attcode>
+                </field>
                 <field id="powerAsocket_id" xsi:type="AttributeExternalKey" _delta="define">
-                    <filter><![CDATA[SELECT PowerSocket WHERE pdu_id = :this->powerA_id AND datacenterdevice_id = 0]]></filter>
+                    <filter><![CDATA[
+                        SELECT PowerSocket
+                        WHERE pdu_id = :this->powerA_id
+                        AND datacenterdevice_id = 0
+                        AND (:this->required_socket_type_id = 0 OR socket_type_id = :this->required_socket_type_id)
+                        ]]></filter>
                     <dependencies>
                         <attribute id="powerA_id" />
+                        <attribute id="required_socket_type_id" />
                     </dependencies>
                     <sql>powerAsocket_id</sql>
                     <target_class>PowerSocket</target_class>
@@ -379,9 +407,15 @@
                     <target_attcode>name</target_attcode>
                 </field>
                 <field id="powerBsocket_id" xsi:type="AttributeExternalKey" _delta="define">
-                    <filter><![CDATA[SELECT PowerSocket WHERE pdu_id = :this->powerB_id AND datacenterdevice_id = 0]]></filter>
+                    <filter><![CDATA[
+                        SELECT PowerSocket
+                        WHERE pdu_id = :this->powerB_id
+                        AND datacenterdevice_id = 0
+                        AND (:this->required_socket_type_id = 0 OR socket_type_id = :this->required_socket_type_id)
+                        ]]></filter>
                     <dependencies>
                         <attribute id="powerB_id" />
+                        <attribute id="required_socket_type_id" />
                     </dependencies>
                     <sql>powerBsocket_id</sql>
                     <target_class>PowerSocket</target_class>
@@ -395,6 +429,11 @@
                 </field>
             </fields>
             <event_listeners>
+                <event_listener id="OnDatacenterDeviceCheckToWritePowerSocket">
+                    <event>EVENT_DB_CHECK_TO_WRITE</event>
+                    <rank>10</rank>
+                    <callback>OnDatacenterDeviceCheckToWritePowerSocket</callback>
+                </event_listener>
                 <event_listener id="OnDatacenterDeviceBeforeWritePowerSocket">
                     <event>EVENT_DB_BEFORE_WRITE</event>
                     <rank>10</rank>
@@ -412,30 +451,91 @@
                 </event_listener>
             </event_listeners>
             <methods>
+                <method id="OnDatacenterDeviceCheckToWritePowerSocket">
+                    <static>false</static>
+                    <access>public</access>
+                    <type>EventListener</type>
+                    <code><![CDATA[
+    public function OnDatacenterDeviceCheckToWritePowerSocket(Combodo\iTop\Service\Events\EventData $oEventData): void
+    {
+        // Only validate if relevant fields are involved (avoid extra DB reads on unrelated updates)
+        $aChanges = $this->ListChanges();
+        $bCheckA = array_key_exists('powerAsocket_id', $aChanges) || array_key_exists('powerA_id', $aChanges) || array_key_exists('required_socket_type_id', $aChanges);
+        $bCheckB = array_key_exists('powerBsocket_id', $aChanges) || array_key_exists('powerB_id', $aChanges) || array_key_exists('required_socket_type_id', $aChanges);
+
+        // Also validate if both sockets exist (even if not changed) to catch edge cases (optional)
+        if (!$bCheckA && !$bCheckB) {
+            return;
+        }
+
+        $requiredTypeId = (int) $this->Get('required_socket_type_id');
+
+        $socketAId = (int) $this->Get('powerAsocket_id');
+        $socketBId = (int) $this->Get('powerBsocket_id');
+
+        $oA = null;
+        $oB = null;
+
+        if ($socketAId !== 0) {
+            $oA = MetaModel::GetObject('PowerSocket', $socketAId, false);
+        }
+        if ($socketBId !== 0) {
+            $oB = MetaModel::GetObject('PowerSocket', $socketBId, false);
+        }
+
+        // --- Slot A validations ---
+        if (is_object($oA)) {
+            // required socket type (hardening)
+            if ($requiredTypeId !== 0) {
+                $aTypeId = (int) $oA->Get('socket_type_id');
+                if ($aTypeId !== 0 && $aTypeId !== $requiredTypeId) {
+                    $this->AddCheckIssue(Dict::S('Class:DatacenterDevice/Error:SocketTypeMismatch'));
+                }
+            }
+        }
+
+        // --- Slot B validations ---
+        if (is_object($oB)) {
+            // required socket type (hardening)
+            if ($requiredTypeId !== 0) {
+                $bTypeId = (int) $oB->Get('socket_type_id');
+                if ($bTypeId !== 0 && $bTypeId !== $requiredTypeId) {
+                    $this->AddCheckIssue(Dict::S('Class:DatacenterDevice/Error:SocketTypeMismatch'));
+                }
+            }
+        }
+    }
+  ]]></code>
+                </method>
                 <method id="OnDatacenterDeviceBeforeWritePowerSocket">
                     <static>false</static>
                     <access>public</access>
                     <type>EventListener</type>
                     <code><![CDATA[
-    public function OnDatacenterDeviceBeforeWritePowerSocket(Combodo\iTop\Service\Events\EventData $oEventData)
+    public function OnDatacenterDeviceBeforeWritePowerSocket(Combodo\iTop\Service\Events\EventData $oEventData): void
     {
-        if ($oEventData->Get('is_new') === true ) {
-            // OnInsert
+        if ($oEventData->Get('is_new') === true) {
+            return; // Insert: no previous sockets to disconnect.
         }
-        else {
-            // OnUpdate
-            $aChanges = $this->ListChanges();
-            if (array_key_exists('powerAsocket_id', $aChanges)) {
-                // record in the Location memory object that the PowerSocketA was changed
-                $this->iPowerSocketAChanged = true;
-                // disconnect the old PowerSocketA
-                $this->DisconnectPowerSocket($this->GetOriginal('powerAsocket_id'));
+
+        $aChanges = $this->ListChanges();
+
+        // Slot A changed?
+        if (array_key_exists('powerAsocket_id', $aChanges)) {
+            $this->bPowerSocketAChanged = true;
+
+            $oldAId = (int) $this->GetOriginal('powerAsocket_id');
+            if ($oldAId !== 0) {
+                $this->DisconnectPowerSocket($oldAId);
             }
-            if (array_key_exists('powerBsocket_id', $aChanges)) {
-                // record in the Location memory object that the PowerSocketB was changed
-                $this->iPowerSocketBChanged = true;
-                // disconnect the old PowerSocketB
-                $this->DisconnectPowerSocket($this->GetOriginal('powerBsocket_id'));
+        }
+        // Slot B changed?
+        if (array_key_exists('powerBsocket_id', $aChanges)) {
+            $this->bPowerSocketBChanged = true;
+
+            $oldBId = (int) $this->GetOriginal('powerBsocket_id');
+            if ($oldBId !== 0) {
+                $this->DisconnectPowerSocket($oldBId);
             }
         }
     }
@@ -446,21 +546,41 @@
                     <access>public</access>
                     <type>EventListener</type>
                     <code><![CDATA[
-    public function OnDatacenterDeviceAfterWritePowerSocket(Combodo\iTop\Service\Events\EventData $oEventData)
+    public function OnDatacenterDeviceAfterWritePowerSocket(Combodo\iTop\Service\Events\EventData $oEventData): void
     {
+        // AfterInsert: connect any already selected sockets
         if ($oEventData->Get('is_new') === true) {
-            // AfterInsert
-            if ($this->Get('powerAsocket_id') != 0)
-                $this->ConnectPowerSocket($this->Get('powerAsocket_id'));
-            if ($this->Get('powerBsocket_id') != 0)
-                $this->ConnectPowerSocket($this->Get('powerBsocket_id'));
-        } else {
-            // AfterUpdate
-            // The DC device is updated in DB and PowerSocket was changed
-            if (isset($this->iPowerSocketAChanged))
-                $this->ConnectPowerSocket($this->Get('powerAsocket_id'));
-            if (isset($this->iPowerSocketBChanged))
-                $this->ConnectPowerSocket($this->Get('powerBsocket_id'));
+            $powerAId = (int) $this->Get('powerAsocket_id');
+            if ($powerAId !== 0) {
+                $this->ConnectPowerSocket($powerAId);
+            }
+
+            $powerBId = (int) $this->Get('powerBsocket_id');
+            if ($powerBId !== 0) {
+                $this->ConnectPowerSocket($powerBId);
+            }
+
+            // Ensure flags are clean (not strictly needed on insert, but safe)
+            $this->bPowerSocketAChanged = false;
+            $this->bPowerSocketBChanged = false;
+            return;
+        }
+
+        // AfterUpdate: connect only if the corresponding slot changed in BEFORE_WRITE
+        if ($this->bPowerSocketAChanged) {
+            $powerAId = (int) $this->Get('powerAsocket_id');
+            if ($powerAId !== 0) {
+                $this->ConnectPowerSocket($powerAId);
+            }
+            $this->bPowerSocketAChanged = false;
+        }
+
+        if ($this->bPowerSocketBChanged) {
+            $powerBId = (int) $this->Get('powerBsocket_id');
+            if ($powerBId !== 0) {
+                $this->ConnectPowerSocket($powerBId);
+            }
+            $this->bPowerSocketBChanged = false;
         }
     }
   ]]></code>
@@ -470,13 +590,18 @@
                     <access>public</access>
                     <type>EventListener</type>
                     <code><![CDATA[
-    public function OnDatacenterDeviceAboutToDeletePowerSocket(Combodo\iTop\Service\Events\EventData $oEventData)
+    public function OnDatacenterDeviceAboutToDeletePowerSocket(Combodo\iTop\Service\Events\EventData $oEventData): void
     {
-        $aChanges = $this->ListChanges();
-        if (array_key_exists('powerAsocket_id', $aChanges))
-            $this->DisconnectPowerSocket($this->Get('powerAsocket_id'));
-        if (array_key_exists('powerBsocket_id', $aChanges))
-            $this->DisconnectPowerSocket($this->Get('powerBsocket_id'));
+        // On delete we always disconnect any referenced sockets, regardless of "changes"
+        $powerAId = (int) $this->Get('powerAsocket_id');
+        if ($powerAId !== 0) {
+            $this->DisconnectPowerSocket($powerAId);
+        }
+
+        $powerBId = (int) $this->Get('powerBsocket_id');
+        if ($powerBId !== 0) {
+            $this->DisconnectPowerSocket($powerBId);
+        }
     }
   ]]></code>
                 </method>
@@ -485,16 +610,19 @@
                     <access>public</access>
                     <type>Overload-cmdbAbstractObject</type>
                     <code><![CDATA[
-    public function ConnectPowerSocket($powerSocketId)
+    public function ConnectPowerSocket(int $powerSocketId): void
     {
-        if ($powerSocketId != 0) {
-            $oPowerSocketObject = MetaModel::GetObject('PowerSocket', $powerSocketId, false);
-            // FYI: MetaModel::GetObject('PowerSocket', 0); generates a FatalError
-            if (is_object($oPowerSocketObject)) {
-                $oPowerSocketObject->Set('datacenterdevice_id', $this->GetKey());
-                $oPowerSocketObject->DBUpdate();
-            }
+        if ($powerSocketId === 0) {
+            return;
         }
+
+        $oPowerSocketObject = MetaModel::GetObject('PowerSocket', $powerSocketId, false);
+        if (!is_object($oPowerSocketObject)) {
+            return;
+        }
+
+        $oPowerSocketObject->Set('datacenterdevice_id', $this->GetKey());
+        $oPowerSocketObject->DBUpdate();
     }
   ]]></code>
                 </method>
@@ -503,16 +631,19 @@
                     <access>public</access>
                     <type>Overload-cmdbAbstractObject</type>
                     <code><![CDATA[
-    public function DisconnectPowerSocket($powerSocketId)
+    public function DisconnectPowerSocket(int $powerSocketId): void
     {
-        if ($powerSocketId != 0) {
-            $oPowerSocketObject = MetaModel::GetObject('PowerSocket', $powerSocketId, false);
-            // FYI: MetaModel::GetObject('PowerSocket', 0); generates a FatalError
-            if (is_object($oPowerSocketObject)) {
-                $oPowerSocketObject->Set('datacenterdevice_id', '');
-                $oPowerSocketObject->DBUpdate();
-            }
+        if ($powerSocketId === 0) {
+            return;
         }
+
+        $oPowerSocketObject = MetaModel::GetObject('PowerSocket', $powerSocketId, false);
+        if (!is_object($oPowerSocketObject)) {
+            return;
+        }
+
+        $oPowerSocketObject->Set('datacenterdevice_id', 0);
+        $oPowerSocketObject->DBUpdate();
     }
   ]]></code>
                 </method>
@@ -520,6 +651,9 @@
             <presentation>
                 <details>
                     <items>
+                        <item id="required_socket_type_id" _delta="define">
+                            <rank>125</rank>
+                        </item>
                         <item id="powerAsocket_id" _delta="define">
                             <rank>131</rank>
                         </item>
@@ -530,6 +664,9 @@
                 </details>
                 <search>
                     <items>
+                        <item id="required_socket_type_id" _delta="define">
+                            <rank>95</rank>
+                        </item>
                         <item id="powerAsocket_id" _delta="define">
                             <rank>101</rank>
                         </item>
@@ -549,6 +686,9 @@
                                 <item id="fieldset:Server:power" _delta="must_exist">
                                     <rank>20</rank>
                                     <items>
+                                        <item id="required_socket_type_id" _delta="define">
+                                            <rank>9</rank>
+                                        </item>
                                         <item id="powerAsocket_id" _delta="define">
                                             <rank>11</rank>
                                         </item>
@@ -563,6 +703,9 @@
                 </details>
                 <search>
                     <items>
+                        <item id="required_socket_type_id" _delta="define">
+                            <rank>9</rank>
+                        </item>
                         <item id="powerAsocket_id" _delta="define">
                             <rank>101</rank>
                         </item>
@@ -582,6 +725,9 @@
                                 <item id="fieldset:Server:power" _delta="must_exist">
                                     <rank>20</rank>
                                     <items>
+                                        <item id="required_socket_type_id" _delta="define">
+                                            <rank>9</rank>
+                                        </item>
                                         <item id="powerAsocket_id" _delta="define">
                                             <rank>11</rank>
                                         </item>
@@ -596,6 +742,9 @@
                 </details>
                 <search>
                     <items>
+                        <item id="required_socket_type_id" _delta="define">
+                            <rank>9</rank>
+                        </item>
                         <item id="powerAsocket_id" _delta="define">
                             <rank>101</rank>
                         </item>
@@ -615,6 +764,9 @@
                                 <item id="fieldset:Server:power" _delta="must_exist">
                                     <rank>20</rank>
                                     <items>
+                                        <item id="required_socket_type_id" _delta="define">
+                                            <rank>9</rank>
+                                        </item>
                                         <item id="powerAsocket_id" _delta="define">
                                             <rank>11</rank>
                                         </item>
@@ -629,6 +781,9 @@
                 </details>
                 <search>
                     <items>
+                        <item id="required_socket_type_id" _delta="define">
+                            <rank>9</rank>
+                        </item>
                         <item id="powerAsocket_id" _delta="define">
                             <rank>101</rank>
                         </item>
@@ -648,6 +803,9 @@
                                 <item id="fieldset:Server:power" _delta="must_exist">
                                     <rank>20</rank>
                                     <items>
+                                        <item id="required_socket_type_id" _delta="define">
+                                            <rank>9</rank>
+                                        </item>
                                         <item id="powerAsocket_id" _delta="define">
                                             <rank>11</rank>
                                         </item>
@@ -662,6 +820,9 @@
                 </details>
                 <search>
                     <items>
+                        <item id="required_socket_type_id" _delta="define">
+                            <rank>9</rank>
+                        </item>
                         <item id="powerAsocket_id" _delta="define">
                             <rank>101</rank>
                         </item>
@@ -681,6 +842,9 @@
                                 <item id="fieldset:Server:power" _delta="must_exist">
                                     <rank>20</rank>
                                     <items>
+                                        <item id="required_socket_type_id" _delta="define">
+                                            <rank>9</rank>
+                                        </item>
                                         <item id="powerAsocket_id" _delta="define">
                                             <rank>11</rank>
                                         </item>
@@ -695,6 +859,9 @@
                 </details>
                 <search>
                     <items>
+                        <item id="required_socket_type_id" _delta="define">
+                            <rank>9</rank>
+                        </item>
                         <item id="powerAsocket_id" _delta="define">
                             <rank>101</rank>
                         </item>
@@ -714,6 +881,9 @@
                                 <item id="fieldset:Server:power" _delta="must_exist">
                                     <rank>20</rank>
                                     <items>
+                                        <item id="required_socket_type_id" _delta="define">
+                                            <rank>9</rank>
+                                        </item>
                                         <item id="powerAsocket_id" _delta="define">
                                             <rank>11</rank>
                                         </item>
@@ -728,6 +898,9 @@
                 </details>
                 <search>
                     <items>
+                        <item id="required_socket_type_id" _delta="define">
+                            <rank>9</rank>
+                        </item>
                         <item id="powerAsocket_id" _delta="define">
                             <rank>101</rank>
                         </item>
@@ -748,6 +921,20 @@
                             <dashlet id="99" xsi:type="DashletBadge" _delta="define">
                                 <rank>10</rank>
                                 <class>PowerSocket</class>
+                            </dashlet>
+                        </dashlets>
+                    </cell>
+                </cells>
+            </definition>
+        </menu>
+        <menu id="Typology" xsi:type="DashboardMenuNode" _delta="if_exists">
+            <definition>
+                <cells>
+                    <cell id="0">
+                        <dashlets>
+                            <dashlet id="powersockettype" xsi:type="DashletBadge" _delta="define">
+                                <rank>35.1</rank>
+                                <class>PowerSocketType</class>
                             </dashlet>
                         </dashlets>
                     </cell>
