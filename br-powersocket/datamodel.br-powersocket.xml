@@ -78,7 +78,7 @@
                             <rank>30</rank>
                         </value>
                         <value id="obsolete">
-                            <code>active</code>
+                            <code>obsolete</code>
                             <rank>40</rank>
                         </value>
                     </values>
