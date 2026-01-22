@@ -67,10 +67,10 @@
                 <list>
                     <items>
                         <item id="name">
-                            <rank>10</rank>
+                            <rank>20</rank>
                         </item>
                         <item id="description">
-                            <rank>20</rank>
+                            <rank>30</rank>
                         </item>
                     </items>
                 </list>
@@ -90,8 +90,9 @@
                 </search>
                 <summary>
                     <items>
-                        <item id="name" />
-                        <item id="picture" />
+                        <item id="picture">
+                            <rank>10</rank>
+                        </item>
                     </items>
                 </summary>
             </presentation>
@@ -130,7 +131,6 @@
                 </reconciliation>
                 <obsolescence>
                     <condition>pdu_id_obsolescence_flag</condition>
-                    <!-- <condition><![CDATA[status = 'obsolete']]></condition> -->
                 </obsolescence>
             </properties>
             <fields>
@@ -153,6 +153,42 @@
                 <field id="pdu_name" xsi:type="AttributeExternalField">
                     <extkey_attcode>pdu_id</extkey_attcode>
                     <target_attcode>name</target_attcode>
+                </field>
+                <field id="feed" xsi:type="AttributeEnum">
+                    <sql>feed</sql>
+                    <is_null_allowed>true</is_null_allowed>
+                    <display_style>radio_horizontal</display_style>
+                    <sort_type>rank</sort_type>
+                    <values>
+                        <value id="A">
+                            <code>A</code>
+                            <rank>10</rank>
+                        </value>
+                        <value id="B">
+                            <code>B</code>
+                            <rank>20</rank>
+                        </value>
+                    </values>
+                </field>
+                <field id="phase" xsi:type="AttributeEnum">
+                    <sql>phase</sql>
+                    <is_null_allowed>true</is_null_allowed>
+                    <display_style>radio_horizontal</display_style>
+                    <sort_type>rank</sort_type>
+                    <values>
+                        <value id="L1">
+                            <code>L1</code>
+                            <rank>10</rank>
+                        </value>
+                        <value id="L2">
+                            <code>L2</code>
+                            <rank>20</rank>
+                        </value>
+                        <value id="L3">
+                            <code>L3</code>
+                            <rank>30</rank>
+                        </value>
+                    </values>
                 </field>
                 <field id="socket_type_id" xsi:type="AttributeExternalKey">
                     <sql>socket_type_id</sql>
@@ -245,33 +281,45 @@
                         <item id="pdu_id">
                             <rank>30</rank>
                         </item>
-                        <item id="socket_type_id">
-                            <rank>35</rank>
-                        </item>
-                        <item id="datacenterdevice_id">
+                        <item id="feed" _delta="define">
                             <rank>40</rank>
                         </item>
-                        <item id="comment">
+                        <item id="phase" _delta="define">
                             <rank>50</rank>
+                        </item>
+                        <item id="socket_type_id">
+                            <rank>60</rank>
+                        </item>
+                        <item id="datacenterdevice_id">
+                            <rank>70</rank>
+                        </item>
+                        <item id="comment">
+                            <rank>80</rank>
                         </item>
                     </items>
                 </details>
                 <list>
                     <items>
                         <item id="name">
-                            <rank>10</rank>
-                        </item>
-                        <item id="status">
                             <rank>20</rank>
                         </item>
+                        <item id="status">
+                            <rank>30</rank>
+                        </item>
                         <item id="socket_type_id">
-                            <rank>25</rank>
+                            <rank>40</rank>
+                        </item>
+                        <item id="feed" _delta="define">
+                            <rank>50</rank>
+                        </item>
+                        <item id="phase" _delta="define">
+                            <rank>60</rank>
                         </item>
                         <item id="datacenterdevice_id">
-                            <rank>43</rank>
+                            <rank>70</rank>
                         </item>
                         <item id="comment">
-                            <rank>40</rank>
+                            <rank>80</rank>
                         </item>
                     </items>
                 </list>
@@ -284,13 +332,19 @@
                             <rank>20</rank>
                         </item>
                         <item id="socket_type_id">
-                            <rank>35</rank>
+                            <rank>30</rank>
                         </item>
-                        <item id="pdu_id">
+                        <item id="feed" _delta="define">
                             <rank>40</rank>
                         </item>
-                        <item id="datacenterdevice_id">
+                        <item id="phase" _delta="define">
                             <rank>50</rank>
+                        </item>
+                        <item id="pdu_id">
+                            <rank>60</rank>
+                        </item>
+                        <item id="datacenterdevice_id">
+                            <rank>70</rank>
                         </item>
                     </items>
                 </search>
@@ -303,7 +357,7 @@
                             <rank>20</rank>
                         </item>
                         <item id="socket_type_id">
-                            <rank>35</rank>
+                            <rank>30</rank>
                         </item>
                         <item id="pdu_id">
                             <rank>40</rank>
