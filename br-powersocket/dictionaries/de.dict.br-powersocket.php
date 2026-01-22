@@ -20,7 +20,8 @@ Dict::Add('DE DE', 'German', 'Deutsch', array(
     'Class:PowerSocket/Attribute:pdu_name' => 'PDU Name',
     'Class:PowerSocket/Attribute:datacenterdevice_id' => 'Datacenter-Gerät',
     'Class:PowerSocket/Attribute:datacenterdevice_name' => 'Datacenter-Gerät Name',
-    'Class:PowerSocket/Error:NoFreePowerSocketOnDatacenterDevice' => 'Kann keine Verbindung mit dem Datacenter-Gerät herstellen, kein freier Stromanschluss verfügbar.',
+    'Class:PowerSocket/Message:NoFreeSocketOnDatacenterDevice' => 'Der PowerSocket konnte dem DatacenterDevice nicht zugewiesen werden, da kein freier Socket verfügbar ist.',
+    'Class:PowerSocket/Error:NoFreeSocketOnDatacenterDevice' => 'Kann keine Verbindung mit dem Datacenter-Gerät herstellen, kein freier Stromanschluss verfügbar.',
     // Class: PDU
     'Class:PDU/Attribute:powersocket_list' => 'Stromanschlüsse',
     'Class:PDU/Attribute:powersocket_list+' => '',
