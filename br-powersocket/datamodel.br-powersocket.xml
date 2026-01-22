@@ -154,22 +154,6 @@
                     <extkey_attcode>pdu_id</extkey_attcode>
                     <target_attcode>name</target_attcode>
                 </field>
-                <field id="feed" xsi:type="AttributeEnum">
-                    <sql>feed</sql>
-                    <is_null_allowed>true</is_null_allowed>
-                    <display_style>radio_horizontal</display_style>
-                    <sort_type>rank</sort_type>
-                    <values>
-                        <value id="A">
-                            <code>A</code>
-                            <rank>10</rank>
-                        </value>
-                        <value id="B">
-                            <code>B</code>
-                            <rank>20</rank>
-                        </value>
-                    </values>
-                </field>
                 <field id="phase" xsi:type="AttributeEnum">
                     <sql>phase</sql>
                     <is_null_allowed>true</is_null_allowed>
@@ -281,9 +265,6 @@
                         <item id="pdu_id">
                             <rank>30</rank>
                         </item>
-                        <item id="feed" _delta="define">
-                            <rank>40</rank>
-                        </item>
                         <item id="phase" _delta="define">
                             <rank>50</rank>
                         </item>
@@ -309,9 +290,6 @@
                         <item id="socket_type_id">
                             <rank>40</rank>
                         </item>
-                        <item id="feed" _delta="define">
-                            <rank>50</rank>
-                        </item>
                         <item id="phase" _delta="define">
                             <rank>60</rank>
                         </item>
@@ -333,9 +311,6 @@
                         </item>
                         <item id="socket_type_id">
                             <rank>30</rank>
-                        </item>
-                        <item id="feed" _delta="define">
-                            <rank>40</rank>
                         </item>
                         <item id="phase" _delta="define">
                             <rank>50</rank>
@@ -415,7 +390,7 @@
                         SELECT PowerSocket
                         WHERE pdu_id = :this->powerA_id
                         AND datacenterdevice_id = 0
-                        AND ( socket_type_id = 0 OR socket_type_id = :this->required_socket_type_id )
+                        AND (:this->required_socket_type_id = 0 OR socket_type_id = :this->required_socket_type_id)
                         ]]></filter>
                     <dependencies>
                         <attribute id="powerA_id" />
@@ -436,7 +411,7 @@
                         SELECT PowerSocket
                         WHERE pdu_id = :this->powerB_id
                         AND datacenterdevice_id = 0
-                        AND ( socket_type_id = 0 OR socket_type_id = :this->required_socket_type_id )
+                        AND (:this->required_socket_type_id = 0 OR socket_type_id = :this->required_socket_type_id)
                         ]]></filter>
                     <dependencies>
                         <attribute id="powerB_id" />
@@ -454,6 +429,11 @@
                 </field>
             </fields>
             <event_listeners>
+                <event_listener id="OnDatacenterDeviceCheckToWritePowerSocket">
+                    <event>EVENT_DB_CHECK_TO_WRITE</event>
+                    <rank>10</rank>
+                    <callback>OnDatacenterDeviceCheckToWritePowerSocket</callback>
+                </event_listener>
                 <event_listener id="OnDatacenterDeviceBeforeWritePowerSocket">
                     <event>EVENT_DB_BEFORE_WRITE</event>
                     <rank>10</rank>
@@ -471,30 +451,91 @@
                 </event_listener>
             </event_listeners>
             <methods>
+                <method id="OnDatacenterDeviceCheckToWritePowerSocket">
+                    <static>false</static>
+                    <access>public</access>
+                    <type>EventListener</type>
+                    <code><![CDATA[
+    public function OnDatacenterDeviceCheckToWritePowerSocket(Combodo\iTop\Service\Events\EventData $oEventData): void
+    {
+        // Only validate if relevant fields are involved (avoid extra DB reads on unrelated updates)
+        $aChanges = $this->ListChanges();
+        $bCheckA = array_key_exists('powerAsocket_id', $aChanges) || array_key_exists('powerA_id', $aChanges) || array_key_exists('required_socket_type_id', $aChanges);
+        $bCheckB = array_key_exists('powerBsocket_id', $aChanges) || array_key_exists('powerB_id', $aChanges) || array_key_exists('required_socket_type_id', $aChanges);
+
+        // Also validate if both sockets exist (even if not changed) to catch edge cases (optional)
+        if (!$bCheckA && !$bCheckB) {
+            return;
+        }
+
+        $requiredTypeId = (int) $this->Get('required_socket_type_id');
+
+        $socketAId = (int) $this->Get('powerAsocket_id');
+        $socketBId = (int) $this->Get('powerBsocket_id');
+
+        $oA = null;
+        $oB = null;
+
+        if ($socketAId !== 0) {
+            $oA = MetaModel::GetObject('PowerSocket', $socketAId, false);
+        }
+        if ($socketBId !== 0) {
+            $oB = MetaModel::GetObject('PowerSocket', $socketBId, false);
+        }
+
+        // --- Slot A validations ---
+        if (is_object($oA)) {
+            // required socket type (hardening)
+            if ($requiredTypeId !== 0) {
+                $aTypeId = (int) $oA->Get('socket_type_id');
+                if ($aTypeId !== 0 && $aTypeId !== $requiredTypeId) {
+                    $this->AddCheckIssue(Dict::S('Class:DatacenterDevice/Error:SocketTypeMismatch'));
+                }
+            }
+        }
+
+        // --- Slot B validations ---
+        if (is_object($oB)) {
+            // required socket type (hardening)
+            if ($requiredTypeId !== 0) {
+                $bTypeId = (int) $oB->Get('socket_type_id');
+                if ($bTypeId !== 0 && $bTypeId !== $requiredTypeId) {
+                    $this->AddCheckIssue(Dict::S('Class:DatacenterDevice/Error:SocketTypeMismatch'));
+                }
+            }
+        }
+    }
+  ]]></code>
+                </method>
                 <method id="OnDatacenterDeviceBeforeWritePowerSocket">
                     <static>false</static>
                     <access>public</access>
                     <type>EventListener</type>
                     <code><![CDATA[
-    public function OnDatacenterDeviceBeforeWritePowerSocket(Combodo\iTop\Service\Events\EventData $oEventData)
+    public function OnDatacenterDeviceBeforeWritePowerSocket(Combodo\iTop\Service\Events\EventData $oEventData): void
     {
-        if ($oEventData->Get('is_new') === true ) {
-            // OnInsert
+        if ($oEventData->Get('is_new') === true) {
+            return; // Insert: no previous sockets to disconnect.
         }
-        else {
-            // OnUpdate
-            $aChanges = $this->ListChanges();
-            if (array_key_exists('powerAsocket_id', $aChanges)) {
-                // record in the Location memory object that the PowerSocketA was changed
-                $this->iPowerSocketAChanged = true;
-                // disconnect the old PowerSocketA
-                $this->DisconnectPowerSocket($this->GetOriginal('powerAsocket_id'));
+
+        $aChanges = $this->ListChanges();
+
+        // Slot A changed?
+        if (array_key_exists('powerAsocket_id', $aChanges)) {
+            $this->bPowerSocketAChanged = true;
+
+            $oldAId = (int) $this->GetOriginal('powerAsocket_id');
+            if ($oldAId !== 0) {
+                $this->DisconnectPowerSocket($oldAId);
             }
-            if (array_key_exists('powerBsocket_id', $aChanges)) {
-                // record in the Location memory object that the PowerSocketB was changed
-                $this->iPowerSocketBChanged = true;
-                // disconnect the old PowerSocketB
-                $this->DisconnectPowerSocket($this->GetOriginal('powerBsocket_id'));
+        }
+        // Slot B changed?
+        if (array_key_exists('powerBsocket_id', $aChanges)) {
+            $this->bPowerSocketBChanged = true;
+
+            $oldBId = (int) $this->GetOriginal('powerBsocket_id');
+            if ($oldBId !== 0) {
+                $this->DisconnectPowerSocket($oldBId);
             }
         }
     }
@@ -505,21 +546,41 @@
                     <access>public</access>
                     <type>EventListener</type>
                     <code><![CDATA[
-    public function OnDatacenterDeviceAfterWritePowerSocket(Combodo\iTop\Service\Events\EventData $oEventData)
+    public function OnDatacenterDeviceAfterWritePowerSocket(Combodo\iTop\Service\Events\EventData $oEventData): void
     {
+        // AfterInsert: connect any already selected sockets
         if ($oEventData->Get('is_new') === true) {
-            // AfterInsert
-            if ($this->Get('powerAsocket_id') != 0)
-                $this->ConnectPowerSocket($this->Get('powerAsocket_id'));
-            if ($this->Get('powerBsocket_id') != 0)
-                $this->ConnectPowerSocket($this->Get('powerBsocket_id'));
-        } else {
-            // AfterUpdate
-            // The DC device is updated in DB and PowerSocket was changed
-            if (isset($this->iPowerSocketAChanged))
-                $this->ConnectPowerSocket($this->Get('powerAsocket_id'));
-            if (isset($this->iPowerSocketBChanged))
-                $this->ConnectPowerSocket($this->Get('powerBsocket_id'));
+            $powerAId = (int) $this->Get('powerAsocket_id');
+            if ($powerAId !== 0) {
+                $this->ConnectPowerSocket($powerAId);
+            }
+
+            $powerBId = (int) $this->Get('powerBsocket_id');
+            if ($powerBId !== 0) {
+                $this->ConnectPowerSocket($powerBId);
+            }
+
+            // Ensure flags are clean (not strictly needed on insert, but safe)
+            $this->bPowerSocketAChanged = false;
+            $this->bPowerSocketBChanged = false;
+            return;
+        }
+
+        // AfterUpdate: connect only if the corresponding slot changed in BEFORE_WRITE
+        if ($this->bPowerSocketAChanged) {
+            $powerAId = (int) $this->Get('powerAsocket_id');
+            if ($powerAId !== 0) {
+                $this->ConnectPowerSocket($powerAId);
+            }
+            $this->bPowerSocketAChanged = false;
+        }
+
+        if ($this->bPowerSocketBChanged) {
+            $powerBId = (int) $this->Get('powerBsocket_id');
+            if ($powerBId !== 0) {
+                $this->ConnectPowerSocket($powerBId);
+            }
+            $this->bPowerSocketBChanged = false;
         }
     }
   ]]></code>
@@ -529,13 +590,18 @@
                     <access>public</access>
                     <type>EventListener</type>
                     <code><![CDATA[
-    public function OnDatacenterDeviceAboutToDeletePowerSocket(Combodo\iTop\Service\Events\EventData $oEventData)
+    public function OnDatacenterDeviceAboutToDeletePowerSocket(Combodo\iTop\Service\Events\EventData $oEventData): void
     {
-        $aChanges = $this->ListChanges();
-        if (array_key_exists('powerAsocket_id', $aChanges))
-            $this->DisconnectPowerSocket($this->Get('powerAsocket_id'));
-        if (array_key_exists('powerBsocket_id', $aChanges))
-            $this->DisconnectPowerSocket($this->Get('powerBsocket_id'));
+        // On delete we always disconnect any referenced sockets, regardless of "changes"
+        $powerAId = (int) $this->Get('powerAsocket_id');
+        if ($powerAId !== 0) {
+            $this->DisconnectPowerSocket($powerAId);
+        }
+
+        $powerBId = (int) $this->Get('powerBsocket_id');
+        if ($powerBId !== 0) {
+            $this->DisconnectPowerSocket($powerBId);
+        }
     }
   ]]></code>
                 </method>
@@ -544,16 +610,19 @@
                     <access>public</access>
                     <type>Overload-cmdbAbstractObject</type>
                     <code><![CDATA[
-    public function ConnectPowerSocket($powerSocketId)
+    public function ConnectPowerSocket(int $powerSocketId): void
     {
-        if ($powerSocketId != 0) {
-            $oPowerSocketObject = MetaModel::GetObject('PowerSocket', $powerSocketId, false);
-            // FYI: MetaModel::GetObject('PowerSocket', 0); generates a FatalError
-            if (is_object($oPowerSocketObject)) {
-                $oPowerSocketObject->Set('datacenterdevice_id', $this->GetKey());
-                $oPowerSocketObject->DBUpdate();
-            }
+        if ($powerSocketId === 0) {
+            return;
         }
+
+        $oPowerSocketObject = MetaModel::GetObject('PowerSocket', $powerSocketId, false);
+        if (!is_object($oPowerSocketObject)) {
+            return;
+        }
+
+        $oPowerSocketObject->Set('datacenterdevice_id', $this->GetKey());
+        $oPowerSocketObject->DBUpdate();
     }
   ]]></code>
                 </method>
@@ -562,16 +631,19 @@
                     <access>public</access>
                     <type>Overload-cmdbAbstractObject</type>
                     <code><![CDATA[
-    public function DisconnectPowerSocket($powerSocketId)
+    public function DisconnectPowerSocket(int $powerSocketId): void
     {
-        if ($powerSocketId != 0) {
-            $oPowerSocketObject = MetaModel::GetObject('PowerSocket', $powerSocketId, false);
-            // FYI: MetaModel::GetObject('PowerSocket', 0); generates a FatalError
-            if (is_object($oPowerSocketObject)) {
-                $oPowerSocketObject->Set('datacenterdevice_id', '');
-                $oPowerSocketObject->DBUpdate();
-            }
+        if ($powerSocketId === 0) {
+            return;
         }
+
+        $oPowerSocketObject = MetaModel::GetObject('PowerSocket', $powerSocketId, false);
+        if (!is_object($oPowerSocketObject)) {
+            return;
+        }
+
+        $oPowerSocketObject->Set('datacenterdevice_id', 0);
+        $oPowerSocketObject->DBUpdate();
     }
   ]]></code>
                 </method>

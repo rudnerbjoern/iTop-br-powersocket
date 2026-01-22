@@ -96,20 +96,20 @@ class _PowerSocket extends cmdbAbstractObject
         $thisSocketTypeId     = (int) $this->Get('socket_type_id');
 
         // If the DatacenterDevice enforces a socket type, the PowerSocket must match it
-        if ($requiredSocketTypeId !== 0 && $thisSocketTypeId !== 0 && $thisSocketTypeId !== $requiredSocketTypeId) {
+        if ($requiredSocketTypeId !== 0 && $thisSocketTypeId !== $requiredSocketTypeId) {
             $this->AddCheckIssue(Dict::S('Class:PowerSocket/Error:SocketTypeMismatch'));
             return;
         }
 
         $powerA = (int) $oDatacenterDeviceObject->Get('powerAsocket_id');
         $powerB = (int) $oDatacenterDeviceObject->Get('powerBsocket_id');
-        $thisSocket = $this->GetKey();
+        $thisSocketId  = (int) $this->GetKey();
 
         // Both slots are already occupied and this PowerSocket is neither of them -> block.
         if (
-            $powerA != 0 && $powerB != 0 &&
-            $powerA != $thisSocket &&
-            $powerB != $thisSocket
+            $powerA !== 0 && $powerB !== 0 &&
+            $powerA !== $thisSocketId  &&
+            $powerB !== $thisSocketId
         ) {
             $this->AddCheckIssue(Dict::S('Class:PowerSocket/Error:NoFreeSocketOnDatacenterDevice'));
         }
@@ -166,6 +166,7 @@ class _PowerSocket extends cmdbAbstractObject
         if ($oEventData->Get('is_new') === true) {
             // AfterInsert: always connect if a target exists.
             $this->ConnectPowerSocket($datacenterdevice_id);
+            $this->bDatacenterDeviceChanged = false;
             return;
         }
 
@@ -199,8 +200,8 @@ class _PowerSocket extends cmdbAbstractObject
      * Why this exists:
      *  - A PowerSocket can be linked to a DatacenterDevice through PowerSocket::datacenterdevice_id.
      *  - The DatacenterDevice represents the actual occupied power slots via:
-     *      - DatacenterDevice::powerAsocket_id / powerA_id (PDU of the A feed)
-     *      - DatacenterDevice::powerBsocket_id / powerB_id (PDU of the B feed)
+     *      - DatacenterDevice::powerAsocket_id / powerA_id (PDU of the A socket)
+     *      - DatacenterDevice::powerBsocket_id / powerB_id (PDU of the B socket)
      *
      * This method performs the "reverse update" on the DatacenterDevice:
      *  - It places this PowerSocket into the first free slot (A preferred, then B),
@@ -248,7 +249,7 @@ class _PowerSocket extends cmdbAbstractObject
             return;
         }
 
-        $thisSocketId = $this->GetKey();
+        $thisSocketId = (int) $this->GetKey();
 
         // Read both slots once (avoid repeated Get() calls and keep logic readable).
         $powerA = (int) $oDatacenterDeviceObject->Get('powerAsocket_id');
@@ -323,7 +324,7 @@ class _PowerSocket extends cmdbAbstractObject
             return;
         }
 
-        $thisSocketId = $this->GetKey();
+        $thisSocketId = (int) $this->GetKey();
 
         // Read both slots once (avoid repeated Get() calls and keep logic readable).
         $powerA = (int) $oDatacenterDeviceObject->Get('powerAsocket_id');
@@ -343,7 +344,7 @@ class _PowerSocket extends cmdbAbstractObject
         }
 
         // Clear slot B if it references this socket.
-        if ($powerB == $thisSocketId) {
+        if ($powerB === $thisSocketId) {
             $oDatacenterDeviceObject->Set('powerB_id', 0);
             $oDatacenterDeviceObject->Set('powerBsocket_id', 0);
             $oDatacenterDeviceObject->DBUpdate();
