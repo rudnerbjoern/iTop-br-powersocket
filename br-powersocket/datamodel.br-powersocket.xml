@@ -1,6 +1,101 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <itop_design version="3.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://rudnerbjoern.github.io/iTop-schema/3.2/itop_design.xsd">
     <classes>
+        <class id="PowerSocketType" _delta="define">
+            <parent>Typology</parent>
+            <properties>
+                <category>bizmodel,searchable</category>
+                <abstract>false</abstract>
+                <key_type>autoincrement</key_type>
+                <db_table>powersockettype</db_table>
+                <db_key_field>id</db_key_field>
+                <db_final_class_field />
+                <naming>
+                    <attributes>
+                        <attribute id="name" />
+                    </attributes>
+                </naming>
+                <fields_semantic>
+                    <image_attribute>picture</image_attribute>
+                </fields_semantic>
+                <style>
+                    <icon />
+                </style>
+                <reconciliation>
+                    <attributes>
+                        <attribute id="name" />
+                    </attributes>
+                </reconciliation>
+                <uniqueness_rules>
+                    <rule id="name">
+                        <attributes>
+                            <attribute id="name" />
+                        </attributes>
+                        <is_blocking>true</is_blocking>
+                    </rule>
+                </uniqueness_rules>
+            </properties>
+            <fields>
+                <field id="description" xsi:type="AttributeText">
+                    <sql>description</sql>
+                    <is_null_allowed>true</is_null_allowed>
+                </field>
+                <field id="picture" xsi:type="AttributeImage">
+                    <sql>picture</sql>
+                    <display_max_width>256</display_max_width>
+                    <display_max_height>256</display_max_height>
+                    <storage_max_width>512</storage_max_width>
+                    <storage_max_height>512</storage_max_height>
+                    <is_null_allowed>true</is_null_allowed>
+                </field>
+            </fields>
+            <methods />
+            <presentation>
+                <details>
+                    <items>
+                        <item id="name">
+                            <rank>10</rank>
+                        </item>
+                        <item id="description">
+                            <rank>20</rank>
+                        </item>
+                        <item id="picture">
+                            <rank>30</rank>
+                        </item>
+                    </items>
+                </details>
+                <list>
+                    <items>
+                        <item id="name">
+                            <rank>10</rank>
+                        </item>
+                        <item id="description">
+                            <rank>20</rank>
+                        </item>
+                    </items>
+                </list>
+                <default_search>
+                    <items>
+                        <item id="name">
+                            <rank>10</rank>
+                        </item>
+                    </items>
+                </default_search>
+                <search>
+                    <items>
+                        <item id="name">
+                            <rank>10</rank>
+                        </item>
+                    </items>
+                </search>
+                <summary>
+                    <items>
+                        <item id="name" />
+                        <item id="picture" />
+                    </items>
+                </summary>
+            </presentation>
+        </class>
         <class id="PowerSocket" _delta="define">
             <parent>cmdbAbstractObject</parent>
             <php_parent>
@@ -57,6 +152,17 @@
                 </field>
                 <field id="pdu_name" xsi:type="AttributeExternalField">
                     <extkey_attcode>pdu_id</extkey_attcode>
+                    <target_attcode>name</target_attcode>
+                </field>
+                <field id="socket_type_id" xsi:type="AttributeExternalKey">
+                    <sql>socket_type_id</sql>
+                    <target_class>PowerSocketType</target_class>
+                    <is_null_allowed>true</is_null_allowed>
+                    <on_target_delete>DEL_MANUAL</on_target_delete>
+                    <allow_target_creation>false</allow_target_creation>
+                </field>
+                <field id="socket_type_name" xsi:type="AttributeExternalField">
+                    <extkey_attcode>socket_type_id</extkey_attcode>
                     <target_attcode>name</target_attcode>
                 </field>
                 <field id="status" xsi:type="AttributeEnum">
@@ -139,6 +245,9 @@
                         <item id="pdu_id">
                             <rank>30</rank>
                         </item>
+                        <item id="socket_type_id">
+                            <rank>35</rank>
+                        </item>
                         <item id="datacenterdevice_id">
                             <rank>40</rank>
                         </item>
@@ -154,6 +263,9 @@
                         </item>
                         <item id="status">
                             <rank>20</rank>
+                        </item>
+                        <item id="socket_type_id">
+                            <rank>25</rank>
                         </item>
                         <item id="datacenterdevice_id">
                             <rank>43</rank>
@@ -171,6 +283,9 @@
                         <item id="status">
                             <rank>20</rank>
                         </item>
+                        <item id="socket_type_id">
+                            <rank>35</rank>
+                        </item>
                         <item id="pdu_id">
                             <rank>40</rank>
                         </item>
@@ -187,6 +302,9 @@
                         <item id="status">
                             <rank>20</rank>
                         </item>
+                        <item id="socket_type_id">
+                            <rank>35</rank>
+                        </item>
                         <item id="pdu_id">
                             <rank>40</rank>
                         </item>
@@ -195,6 +313,13 @@
                         </item>
                     </items>
                 </default_search>
+                <summary>
+                    <items>
+                        <item id="socket_type_id">
+                            <rank>10</rank>
+                        </item>
+                    </items>
+                </summary>
             </presentation>
         </class>
         <class id="PDU" _delta="must_exist">
@@ -220,10 +345,27 @@
         </class>
         <class id="DatacenterDevice" _delta="must_exist">
             <fields>
+                <field id="required_socket_type_id" xsi:type="AttributeExternalKey" _delta="define">
+                    <sql>required_socket_type_id</sql>
+                    <target_class>PowerSocketType</target_class>
+                    <is_null_allowed>true</is_null_allowed>
+                    <on_target_delete>DEL_MANUAL</on_target_delete>
+                    <allow_target_creation>false</allow_target_creation>
+                </field>
+                <field id="required_socket_type_name" xsi:type="AttributeExternalField" _delta="define">
+                    <extkey_attcode>required_socket_type_id</extkey_attcode>
+                    <target_attcode>name</target_attcode>
+                </field>
                 <field id="powerAsocket_id" xsi:type="AttributeExternalKey" _delta="define">
-                    <filter><![CDATA[SELECT PowerSocket WHERE pdu_id = :this->powerA_id AND datacenterdevice_id = 0]]></filter>
+                    <filter><![CDATA[
+                        SELECT PowerSocket
+                        WHERE pdu_id = :this->powerA_id
+                        AND datacenterdevice_id = 0
+                        AND ( socket_type_id = 0 OR socket_type_id = :this->required_socket_type_id )
+                        ]]></filter>
                     <dependencies>
                         <attribute id="powerA_id" />
+                        <attribute id="required_socket_type_id" />
                     </dependencies>
                     <sql>powerAsocket_id</sql>
                     <target_class>PowerSocket</target_class>
@@ -236,9 +378,15 @@
                     <target_attcode>name</target_attcode>
                 </field>
                 <field id="powerBsocket_id" xsi:type="AttributeExternalKey" _delta="define">
-                    <filter><![CDATA[SELECT PowerSocket WHERE pdu_id = :this->powerB_id AND datacenterdevice_id = 0]]></filter>
+                    <filter><![CDATA[
+                        SELECT PowerSocket
+                        WHERE pdu_id = :this->powerB_id
+                        AND datacenterdevice_id = 0
+                        AND ( socket_type_id = 0 OR socket_type_id = :this->required_socket_type_id )
+                        ]]></filter>
                     <dependencies>
                         <attribute id="powerB_id" />
+                        <attribute id="required_socket_type_id" />
                     </dependencies>
                     <sql>powerBsocket_id</sql>
                     <target_class>PowerSocket</target_class>
@@ -377,6 +525,9 @@
             <presentation>
                 <details>
                     <items>
+                        <item id="required_socket_type_id" _delta="define">
+                            <rank>125</rank>
+                        </item>
                         <item id="powerAsocket_id" _delta="define">
                             <rank>131</rank>
                         </item>
@@ -387,6 +538,9 @@
                 </details>
                 <search>
                     <items>
+                        <item id="required_socket_type_id" _delta="define">
+                            <rank>95</rank>
+                        </item>
                         <item id="powerAsocket_id" _delta="define">
                             <rank>101</rank>
                         </item>
@@ -406,6 +560,9 @@
                                 <item id="fieldset:Server:power" _delta="must_exist">
                                     <rank>20</rank>
                                     <items>
+                                        <item id="required_socket_type_id" _delta="define">
+                                            <rank>9</rank>
+                                        </item>
                                         <item id="powerAsocket_id" _delta="define">
                                             <rank>11</rank>
                                         </item>
@@ -420,6 +577,9 @@
                 </details>
                 <search>
                     <items>
+                        <item id="required_socket_type_id" _delta="define">
+                            <rank>9</rank>
+                        </item>
                         <item id="powerAsocket_id" _delta="define">
                             <rank>101</rank>
                         </item>
@@ -439,6 +599,9 @@
                                 <item id="fieldset:Server:power" _delta="must_exist">
                                     <rank>20</rank>
                                     <items>
+                                        <item id="required_socket_type_id" _delta="define">
+                                            <rank>9</rank>
+                                        </item>
                                         <item id="powerAsocket_id" _delta="define">
                                             <rank>11</rank>
                                         </item>
@@ -453,6 +616,9 @@
                 </details>
                 <search>
                     <items>
+                        <item id="required_socket_type_id" _delta="define">
+                            <rank>9</rank>
+                        </item>
                         <item id="powerAsocket_id" _delta="define">
                             <rank>101</rank>
                         </item>
@@ -472,6 +638,9 @@
                                 <item id="fieldset:Server:power" _delta="must_exist">
                                     <rank>20</rank>
                                     <items>
+                                        <item id="required_socket_type_id" _delta="define">
+                                            <rank>9</rank>
+                                        </item>
                                         <item id="powerAsocket_id" _delta="define">
                                             <rank>11</rank>
                                         </item>
@@ -486,6 +655,9 @@
                 </details>
                 <search>
                     <items>
+                        <item id="required_socket_type_id" _delta="define">
+                            <rank>9</rank>
+                        </item>
                         <item id="powerAsocket_id" _delta="define">
                             <rank>101</rank>
                         </item>
@@ -505,6 +677,9 @@
                                 <item id="fieldset:Server:power" _delta="must_exist">
                                     <rank>20</rank>
                                     <items>
+                                        <item id="required_socket_type_id" _delta="define">
+                                            <rank>9</rank>
+                                        </item>
                                         <item id="powerAsocket_id" _delta="define">
                                             <rank>11</rank>
                                         </item>
@@ -519,6 +694,9 @@
                 </details>
                 <search>
                     <items>
+                        <item id="required_socket_type_id" _delta="define">
+                            <rank>9</rank>
+                        </item>
                         <item id="powerAsocket_id" _delta="define">
                             <rank>101</rank>
                         </item>
@@ -538,6 +716,9 @@
                                 <item id="fieldset:Server:power" _delta="must_exist">
                                     <rank>20</rank>
                                     <items>
+                                        <item id="required_socket_type_id" _delta="define">
+                                            <rank>9</rank>
+                                        </item>
                                         <item id="powerAsocket_id" _delta="define">
                                             <rank>11</rank>
                                         </item>
@@ -552,6 +733,9 @@
                 </details>
                 <search>
                     <items>
+                        <item id="required_socket_type_id" _delta="define">
+                            <rank>9</rank>
+                        </item>
                         <item id="powerAsocket_id" _delta="define">
                             <rank>101</rank>
                         </item>
@@ -571,6 +755,9 @@
                                 <item id="fieldset:Server:power" _delta="must_exist">
                                     <rank>20</rank>
                                     <items>
+                                        <item id="required_socket_type_id" _delta="define">
+                                            <rank>9</rank>
+                                        </item>
                                         <item id="powerAsocket_id" _delta="define">
                                             <rank>11</rank>
                                         </item>
@@ -585,6 +772,9 @@
                 </details>
                 <search>
                     <items>
+                        <item id="required_socket_type_id" _delta="define">
+                            <rank>9</rank>
+                        </item>
                         <item id="powerAsocket_id" _delta="define">
                             <rank>101</rank>
                         </item>
@@ -605,6 +795,20 @@
                             <dashlet id="99" xsi:type="DashletBadge" _delta="define">
                                 <rank>10</rank>
                                 <class>PowerSocket</class>
+                            </dashlet>
+                        </dashlets>
+                    </cell>
+                </cells>
+            </definition>
+        </menu>
+        <menu id="Typology" xsi:type="DashboardMenuNode" _delta="if_exists">
+            <definition>
+                <cells>
+                    <cell id="0">
+                        <dashlets>
+                            <dashlet id="powersockettype" xsi:type="DashletBadge" _delta="define">
+                                <rank>35.1</rank>
+                                <class>PowerSocketType</class>
                             </dashlet>
                         </dashlets>
                     </cell>

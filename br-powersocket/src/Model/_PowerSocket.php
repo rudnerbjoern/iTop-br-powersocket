@@ -73,6 +73,8 @@ class _PowerSocket extends cmdbAbstractObject
      */
     public function OnPowerSocketCheckToWrite(EventData $oEventData): void
     {
+        // This method will block the PowerSocket modification by adding a Check Issue
+
         // Only validate when the datacenterdevice_id attribute is being modified.
         $aChanges = $this->ListChanges();
         if (!array_key_exists('datacenterdevice_id', $aChanges)) {
@@ -87,6 +89,16 @@ class _PowerSocket extends cmdbAbstractObject
         $oDatacenterDeviceObject = $this->LoadDatacenterDevice($datacenterdevice_id);
         if ($oDatacenterDeviceObject === null) {
             return; // Target device not found / not accessible -> let iTop handle the rest.
+        }
+
+        // --- Socket type compatibility check (PowerSocket -> DatacenterDevice) ---
+        $requiredSocketTypeId = (int) $oDatacenterDeviceObject->Get('required_socket_type_id');
+        $thisSocketTypeId     = (int) $this->Get('socket_type_id');
+
+        // If the DatacenterDevice enforces a socket type, the PowerSocket must match it
+        if ($requiredSocketTypeId !== 0 && $thisSocketTypeId !== 0 && $thisSocketTypeId !== $requiredSocketTypeId) {
+            $this->AddCheckIssue(Dict::S('Class:PowerSocket/Error:SocketTypeMismatch'));
+            return;
         }
 
         $powerA = (int) $oDatacenterDeviceObject->Get('powerAsocket_id');
