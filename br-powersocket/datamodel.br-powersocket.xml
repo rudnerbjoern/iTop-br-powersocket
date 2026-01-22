@@ -171,8 +171,8 @@
                     <display_style>radio_horizontal</display_style>
                     <sort_type>rank</sort_type>
                     <values>
-                        <value id="stock">
-                            <code>stock</code>
+                        <value id="available">
+                            <code>available</code>
                             <rank>10</rank>
                         </value>
                         <value id="inactive">
