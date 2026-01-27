@@ -3,13 +3,15 @@
 /**
  * @copyright   Copyright (C) 2022-2026 Björn Rudner
  * @license     https://www.gnu.org/licenses/gpl-3.0.en.html
- * @version     2026-01-22
+ * @version     2026-01-27
  *
  * Localized data
  */
 
 /** @disregard P1009 Undefined type Dict */
 Dict::Add('EN US', 'English', 'English', array(
+    'UI:PowerSocket:Action:Create:PDU:CreatePowerSockets' => 'Create power sockets',
+    'UI:PowerSocket:Action:Create:PDU:CreatePowerSockets:NoCapacity' => 'Power sockets cannot be created because there is no capacity left!',
     // Class: PowerSocketType
     'Class:PowerSocketType' => 'Power socket type',
     'Class:PowerSocketType+' => 'Defines the connector/socket type used by a PowerSocket (e.g. C13, C19, Schuko).',
@@ -46,6 +48,9 @@ Dict::Add('EN US', 'English', 'English', array(
     'Class:PowerSocket/Error:NoFreeSocketOnDatacenterDevice' => 'Das ausgewählte DatacenterDevice verfügt über keinen freien PowerSocket.',
     'Class:PowerSocket/Error:SocketTypeMismatch' => 'The selected DatacenterDevice requires a different socket type.',
     // Class: PDU
+    'PDU:rackinfo' => 'Rack Information',
+    'Class:PDU/Attribute:capacity' => 'Capacity',
+    'Class:PDU/Attribute:capacity+' => 'Number of power sockets that the PDU can host',
     'Class:PDU/Attribute:powersocket_list' => 'Power Sockets',
     'Class:PDU/Attribute:powersocket_list+' => '',
     // Class: DatacenterDevice
