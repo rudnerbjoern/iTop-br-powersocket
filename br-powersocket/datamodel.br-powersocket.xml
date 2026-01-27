@@ -352,7 +352,19 @@
             </presentation>
         </class>
         <class id="PDU" _delta="must_exist">
+            <properties>
+                <naming>
+                    <complementary_attributes>
+                        <attribute id="capacity" _delta="define" />
+                    </complementary_attributes>
+                </naming>
+            </properties>
             <fields>
+                <field id="capacity" xsi:type="AttributeInteger">
+                    <sql>capacity</sql>
+                    <default_value />
+                    <is_null_allowed>true</is_null_allowed>
+                </field>
                 <field id="powersocket_list" xsi:type="AttributeLinkedSet" _delta="define">
                     <linked_class>PowerSocket</linked_class>
                     <ext_key_to_me>pdu_id</ext_key_to_me>
@@ -362,6 +374,38 @@
                     <count_max>0</count_max>
                 </field>
             </fields>
+            <methods>
+                <method id="CreatePowerSockets">
+                    <static>false</static>
+                    <access>public</access>
+                    <type>Custom</type>
+                    <code><![CDATA[
+    public function CreatePowerSockets(): string
+    {
+        $iCapacity = $this->Get('capacity');
+        $oPowerSocketSet = $this->Get('powersocket_list');
+        $iPowerSocketCount = $oPowerSocketSet->Count();
+        if ($iPowerSocketCount >= $iCapacity) {
+            return Dict::S('UI:PowerSocket:Action:Create:PDU:CreatePowerSockets:NoCapacity');
+        }
+        $aPowerSocketName = $oPowerSocketSet->GetColumnAsArray('name');
+        $j = 0;
+        for ($i = $iPowerSocketCount + 1; $i <= $iCapacity; $i++) {
+            $oPowerSocket = MetaModel::NewObject('PowerSocket');
+            do {
+                $sName = sprintf('%1$0'.strlen((string)$iCapacity).'d/%2$d', ++$j, $iCapacity);
+            } while (in_array($sName, $aPowerSocketName));
+            $oPowerSocket->Set('name', $sName);
+            $oPowerSocket->Set('pdu_id', $this->GetKey());
+            $oPowerSocket->Set('status', 'active');
+            $oPowerSocket->DBInsert();
+        }
+        return '';
+    }
+                        ]]></code>
+                </method>
+
+            </methods>
             <presentation>
                 <details>
                     <items>
@@ -447,6 +491,9 @@
                                         <item id="powerstart_id">
                                             <rank>10</rank>
                                         </item>
+                                        <item id="capacity">
+                                            <rank>20</rank>
+                                        </item>
                                     </items>
                                 </item>
                                 <item id="fieldset:Server:Date">
@@ -473,7 +520,6 @@
                                 </item>
                             </items>
                         </item>
-
                         <item id="powersocket_list" _delta="define">
                             <rank>105</rank>
                         </item>

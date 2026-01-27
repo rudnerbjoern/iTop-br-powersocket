@@ -3,7 +3,7 @@
 /**
  * @copyright   Copyright (C) 2022-2026 Björn Rudner
  * @license     https://www.gnu.org/licenses/gpl-3.0.en.html
- * @version     2026-01-22
+ * @version     2026-01-27
  *
  * iTop module definition file
  */
@@ -26,14 +26,16 @@ SetupWebPage::AddModule(
             'itop-virtualization-mgmt/3.2.0',
             'itop-storage-mgmt/3.2.0',
             'teemip-network-mgmt-extended/3.1.0',
-            'teemip-datacenter-mgmt-adaptor/3.1.0',
         ),
         'mandatory' => false,
         'visible' => true,
 
         // Components
         //
-        'datamodel' => array(),
+        'datamodel' => array(
+            'src/Controller/PowerSocketController.php',
+            'src/Hook/PowerSocketOtherActions.php',
+        ),
         'webservice' => array(),
         'data.struct' => array(
             // add your 'structure' definition XML files here,

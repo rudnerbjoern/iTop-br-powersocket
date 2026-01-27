@@ -3,13 +3,15 @@
 /**
  * @copyright   Copyright (C) 2022-2026 Björn Rudner
  * @license     https://www.gnu.org/licenses/gpl-3.0.en.html
- * @version     2026-01-22
+ * @version     2026-01-27
  *
  * Localized data
  */
 
 /** @disregard P1009 Undefined type Dict */
 Dict::Add('DE DE', 'German', 'Deutsch', array(
+    'UI:PowerSocket:Action:Create:PDU:CreatePowerSockets' => 'Stromanschlüsse erstellen',
+    'UI:PowerSocket:Action:Create:PDU:CreatePowerSockets:NoCapacity' => 'Stromanschlüsse können nicht erstellt werden, keine freie Kapazität!',
     // Class: PowerSocketType
     'Class:PowerSocketType' => 'Stromanschluss-Typ',
     'Class:PowerSocketType+' => 'Definiert den Steckertyp / Socket-Typ eines PowerSockets (z. B. C13, C19, Schuko).',
@@ -46,6 +48,9 @@ Dict::Add('DE DE', 'German', 'Deutsch', array(
     'Class:PowerSocket/Error:NoFreeSocketOnDatacenterDevice' => 'Kann keine Verbindung mit dem Datacenter-Gerät herstellen, kein freier Stromanschluss verfügbar.',
     'Class:PowerSocket/Error:SocketTypeMismatch' => 'Das ausgewählte DatacenterDevice erfordert einen anderen Socket-Typ.',
     // Class: PDU
+    'PDU:rackinfo' => 'Rack-Informationen',
+    'Class:PDU/Attribute:capacity' => 'Kapazität',
+    'Class:PDU/Attribute:capacity+' => 'Anzahl der Stromanschlüsse, die diese PDU enthält.',
     'Class:PDU/Attribute:powersocket_list' => 'Stromanschlüsse',
     'Class:PDU/Attribute:powersocket_list+' => '',
     // Class: DatacenterDevice

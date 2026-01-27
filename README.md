@@ -29,6 +29,7 @@ The extension ensures that:
 
 * Adds a new ```PowerSocket``` class
 * Extends the ```PDU``` model with a socket list
+* Automatic batch creation of power sockets for PDUs
 * Adds Power A / Power B socket fields to ```DatacenterDevice```
 * Automatic slot assignment (A → B)
 * Consistency checks and rollback logic
