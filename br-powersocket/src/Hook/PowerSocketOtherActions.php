@@ -24,12 +24,13 @@ class PowerSocketOtherActions implements iPopupMenuExtension
         $aItems = array();
 
         if ($iMenuId === iPopupMenuExtension::MENU_OBJDETAILS_ACTIONS && ($param instanceof PDU)) {
-            // Optional: Nur anzeigen, wenn der User Modify-Rechte hat
-            if (!UserRights::IsActionAllowed('PDU', UR_ACTION_MODIFY, $oObject)) {
-                return $aItems;
-            }
 
             $oObj = $param;
+
+            // Optional: Nur anzeigen, wenn der User Modify-Rechte hat
+            if (!UserRights::IsActionAllowed('PDU', UR_ACTION_MODIFY, $oObj)) {
+                return $aItems;
+            }
 
             $iCapacity = $oObj->Get('capacity');
             if (!is_null($iCapacity) && ($iCapacity > 0)) {
