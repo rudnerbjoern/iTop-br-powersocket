@@ -1,5 +1,12 @@
 <?php
 
+/**
+ *
+ * @copyright   Copyright (C) 2022-2026 Björn Rudner
+ * @license     https://www.gnu.org/licenses/gpl-3.0.en.html
+ * @version     2026-01-27
+ */
+
 namespace BR\Extension\PowerSocket\Controller;
 
 use cmdbAbstractObject;
