@@ -39,11 +39,11 @@ The extension ensures that:
 
 ### Power Supply
 
-![Power Supply](Screenshots/PowerSupply.png)
+![Power Supply](doc/Screenshots/PowerSupply.png)
 
 ### PDU
 
-![PDU](Screenshots/PDU.png)
+![PDU](doc/Screenshots/PDU.png)
 
 ## Conceptual Model
 
